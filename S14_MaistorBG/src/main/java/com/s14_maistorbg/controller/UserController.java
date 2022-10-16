@@ -25,13 +25,15 @@ public class UserController {
         System.out.println(user.getLastName());
         System.out.println(user.getPhoneNumber());
         System.out.println(user.getEmail());
+
+
         userRepository.save(user);
         return user;
     }
 
-    public User login(@RequestBody User user){
-        userRepository.
-    }
+//    public User login(@RequestBody User user){
+//        userRepository.
+//    }
 
 
 }
