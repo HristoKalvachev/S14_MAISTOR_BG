@@ -26,7 +26,7 @@ public class UserController {
         System.out.println(user.getLastName());
         System.out.println(user.getPhoneNumber());
         System.out.println(user.getEmail());
-        if (!isPhoneValid(user)){
+        if (!isPhoneValid(user)) {
             throw new BadRequestException("Not valid phone number!");
         }
         userRepository.save(user);
@@ -36,7 +36,7 @@ public class UserController {
 
     @PutMapping("/users/{id}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public ResponseEntity<User> editAccount(@RequestBody User newUser, @PathVariable int id){
+    public ResponseEntity<User> editAccount(@RequestBody User newUser, @PathVariable int id) {
         User updatedUser = userRepository.findById(id)
                 .map(user -> {
                     user.setUsername(newUser.getUsername());
@@ -52,7 +52,7 @@ public class UserController {
     }
 
     @ExceptionHandler(BadRequestException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     private ExceptionDTO badRequestHandler(Exception exception) {
         ExceptionDTO exceptionDTO = new ExceptionDTO();
         exceptionDTO.setDateTime(LocalDateTime.now());
@@ -61,9 +61,9 @@ public class UserController {
         return exceptionDTO;
     }
 
-    private boolean isPhoneValid(User u){
+    private boolean isPhoneValid(User u) {
         String pattern = "^([0|\\+[0-9]{10})";
-        if (u.getPhoneNumber().equals(pattern)){
+        if (u.getPhoneNumber().equals(pattern)) {
             return true;
         }
         return false;
