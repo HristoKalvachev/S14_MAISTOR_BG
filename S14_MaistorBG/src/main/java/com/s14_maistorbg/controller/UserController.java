@@ -33,6 +33,17 @@ public class UserController {
         return user;
     }
 
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<User> delete(User user, @PathVariable int id){
+
+        User userForDelete = userRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("User does not exist!"));
+
+        userRepository.delete(userForDelete);
+        return new ResponseEntity<>(userForDelete, HttpStatus.OK);
+
+    }
+
 
     @PutMapping("/users/{id}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
@@ -62,8 +73,8 @@ public class UserController {
     }
 
     private boolean isPhoneValid(User u){
-        String pattern = "^([0|\\+[0-9]{10})";
-        if (u.getPhoneNumber().equals(pattern)){
+        String pattern = "0[0-9]{9}";
+        if (u.getPhoneNumber().matches(pattern)){
             return true;
         }
         return false;
