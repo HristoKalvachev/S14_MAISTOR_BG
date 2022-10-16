@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @RestController
 public class UserController {
 
-
     @Autowired
     private UserRepository userRepository;
 
@@ -39,6 +38,5 @@ public class UserController {
         exceptionDTO.setStatus(HttpStatus.BAD_REQUEST.value());
         return exceptionDTO;
     }
-
 
 }
