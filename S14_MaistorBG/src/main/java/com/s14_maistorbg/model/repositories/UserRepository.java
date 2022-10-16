@@ -1,6 +1,6 @@
-package com.s14_maistorbg.repositories;
+package com.s14_maistorbg.model.repositories;
 
-import com.s14_maistorbg.entities.User;
+import com.s14_maistorbg.model.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

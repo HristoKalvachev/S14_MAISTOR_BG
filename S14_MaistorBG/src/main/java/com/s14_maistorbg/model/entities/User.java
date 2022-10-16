@@ -1,4 +1,4 @@
-package com.s14_maistorbg.entities;
+package com.s14_maistorbg.model.entities;
 
 import lombok.*;
 
