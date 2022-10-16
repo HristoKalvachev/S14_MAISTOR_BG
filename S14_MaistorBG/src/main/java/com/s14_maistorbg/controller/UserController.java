@@ -6,6 +6,7 @@ import com.s14_maistorbg.model.exceptions.BadRequestException;
 import com.s14_maistorbg.model.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -25,54 +26,30 @@ public class UserController {
         System.out.println(user.getLastName());
         System.out.println(user.getPhoneNumber());
         System.out.println(user.getEmail());
+        if (!isPhoneValid(user)){
+            throw new BadRequestException("Not valid phone number!");
+        }
         userRepository.save(user);
         return user;
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @PutMapping("/users/{id}")
+    @ResponseStatus(code = HttpStatus.ACCEPTED)
+    public ResponseEntity<User> editAccount(@RequestBody User newUser, @PathVariable int id){
+        User updatedUser = userRepository.findById(id)
+                .map(user -> {
+                    user.setUsername(newUser.getUsername());
+//                    user.setPassword(newUser.getPassword());
+//                    user.setFirstName(newUser.getFirstName());
+//                    user.setLastName(newUser.getLastName());
+//                    user.setPhoneNumber(newUser.getPhoneNumber());
+//                    user.setProfilePicUrl(newUser.getProfilePicUrl());
+                    return userRepository.save(user);
+                })
+                .orElseThrow(() -> new BadRequestException("The profile can not be edited!"));
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    }
 
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -83,5 +60,14 @@ public class UserController {
         exceptionDTO.setStatus(HttpStatus.BAD_REQUEST.value());
         return exceptionDTO;
     }
+
+    private boolean isPhoneValid(User u){
+        String pattern = "^([0|\\+[0-9]{10})";
+        if (u.getPhoneNumber().equals(pattern)){
+            return true;
+        }
+        return false;
+    }
+
 
 }

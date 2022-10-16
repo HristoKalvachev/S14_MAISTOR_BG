@@ -38,5 +38,5 @@ public class OfferController {
                 }).orElseThrow(()->new BadRequestException("Bad request! Can`t edit profile!"));
         return new ResponseEntity<>(updatedOffer,HttpStatus.ACCEPTED);
     }
-    
+
 }
