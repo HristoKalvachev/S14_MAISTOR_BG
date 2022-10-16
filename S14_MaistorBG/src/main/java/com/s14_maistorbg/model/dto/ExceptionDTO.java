@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class ExceptionDTO{
+public class ExceptionDTO {
 
     private int status;
     private LocalDateTime dateTime;

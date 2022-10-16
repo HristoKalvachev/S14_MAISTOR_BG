@@ -1,5 +1,6 @@
 package com.s14_maistorbg.controller;
 
+import com.s14_maistorbg.model.dto.ExceptionDTO;
 import com.s14_maistorbg.model.entities.Offer;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
 import com.s14_maistorbg.model.repositories.OfferRepository;
@@ -7,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 public class OfferController {
@@ -35,8 +38,25 @@ public class OfferController {
                     o.setCityId(offer.getCityId());
                     o.setRepairCategoryId(offer.getRepairCategoryId());
                     return offerRepository.save(o);
-                }).orElseThrow(()->new BadRequestException("Bad request! Can`t edit profile!"));
-        return new ResponseEntity<>(updatedOffer,HttpStatus.ACCEPTED);
+                }).orElseThrow(() -> new BadRequestException("Bad request! Can`t edit profile!"));
+        return new ResponseEntity<>(updatedOffer, HttpStatus.ACCEPTED);
     }
 
+    @DeleteMapping("offers/{id}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public Offer deleteOffer(@RequestBody Offer offer, @PathVariable int id) {
+        Offer wantedOffer = offerRepository.findById(id).orElseThrow(() -> new BadRequestException("Can`t delete user!"));
+        offerRepository.delete(wantedOffer);
+        return wantedOffer;
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    private ExceptionDTO badRequestHandler(Exception exception) {
+        ExceptionDTO exceptionDTO = new ExceptionDTO();
+        exceptionDTO.setDateTime(LocalDateTime.now());
+        exceptionDTO.setMsg(exception.getMessage());
+        exceptionDTO.setStatus(HttpStatus.BAD_REQUEST.value());
+        return exceptionDTO;
+    }
 }
