@@ -76,7 +76,6 @@ public class UserController {
     private boolean isPhoneValid(User u) {
         String pattern = "^([0|\\+[0-9]{10})";
         if (u.getPhoneNumber().equals(pattern)) {
-
             return true;
         }
         return false;
