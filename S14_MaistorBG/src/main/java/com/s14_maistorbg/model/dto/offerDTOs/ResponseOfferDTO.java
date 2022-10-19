@@ -5,7 +5,6 @@ import lombok.Data;
 @Data
 public class ResponseOfferDTO {
 
-    private int id;
     private String offerTitle;
     private String jobDescription;
     private double budget;

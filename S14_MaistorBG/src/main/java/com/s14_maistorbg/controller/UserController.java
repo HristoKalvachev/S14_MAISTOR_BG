@@ -46,7 +46,6 @@ public class UserController extends ExceptionController {
         }
     }
 
-
     @DeleteMapping("/users/{id}")
     public UserWithoutPassDTO delete(@PathVariable int id){
         return userService.delete(id);
@@ -68,14 +67,6 @@ public class UserController extends ExceptionController {
                 })
                 .orElseThrow(() -> new BadRequestException("The profile can not be edited!"));
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-    }
-
-    private boolean isPhoneValid(User u) {
-        String pattern = "^([0|\\+[0-9]{10})";
-        if (u.getPhoneNumber().equals(pattern)) {
-            return true;
-        }
-        return false;
     }
 
 }
