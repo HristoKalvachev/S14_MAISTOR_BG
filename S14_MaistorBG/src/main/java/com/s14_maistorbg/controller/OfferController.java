@@ -21,7 +21,6 @@ public class OfferController extends ExceptionController {
     @PostMapping("/offers")
     @ResponseStatus(code = HttpStatus.CREATED)
     public ResponseOfferDTO postOffer(@RequestBody ResponseOfferDTO offerDTO) {
-
         return offerService.postOffer(offerDTO);
     }
 
@@ -35,15 +34,14 @@ public class OfferController extends ExceptionController {
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public PostWithoutOwnerDTO editOffer(@RequestBody EditOfferDTO editOfferDTO, @PathVariable int id) {
 
-        return offerService.editOffer(id,editOfferDTO);
+        return offerService.editOffer(id, editOfferDTO);
     }
 
-//    @DeleteMapping("offers/{id}")
-//    @ResponseStatus(code = HttpStatus.OK)
-//    public Offer deleteOffer(@RequestBody Offer offer, @PathVariable int id) {
-//        Offer wantedOffer = offerRepository.findById(id).orElseThrow(() -> new BadRequestException("Can`t delete user!"));
-//        offerRepository.delete(wantedOffer);
-//        return wantedOffer;
-//    }
+    @DeleteMapping("offers/{id}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseOfferDTO deleteOffer(@PathVariable int id) {
+
+        return offerService.deleteOffer(id);
+    }
 
 }

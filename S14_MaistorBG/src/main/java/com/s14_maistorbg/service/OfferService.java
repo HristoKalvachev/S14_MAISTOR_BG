@@ -11,7 +11,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 public class OfferService {
@@ -22,6 +21,7 @@ public class OfferService {
     private ModelMapper modelMapper;
 
     public ResponseOfferDTO postOffer(ResponseOfferDTO offerDTO) {
+        modelMapper.getConfiguration().setAmbiguityIgnored(true);
         Offer offer = modelMapper.map(offerDTO, Offer.class);
         if (offer.getOfferTitle().trim().length() < 5) {
             throw new BadRequestException("Write a more describing title!");
@@ -53,6 +53,13 @@ public class OfferService {
                     o.setRepairCategoryId(editOfferDTO.getRepairCategoryId());
                     return offerRepository.save(o);
                 }).orElseThrow(() -> new NotFoundException("No such user found!"));
-        return modelMapper.map(updatedOffer,PostWithoutOwnerDTO.class);
+        return modelMapper.map(updatedOffer, PostWithoutOwnerDTO.class);
+    }
+
+    public ResponseOfferDTO deleteOffer(int id) {
+        Offer wantedOffer = offerRepository.findById(id).orElseThrow(() -> new BadRequestException("Can`t delete user!"));
+        offerRepository.delete(wantedOffer);
+        ResponseOfferDTO offerDTO = modelMapper.map(wantedOffer, ResponseOfferDTO.class);
+        return offerDTO;
     }
 }
