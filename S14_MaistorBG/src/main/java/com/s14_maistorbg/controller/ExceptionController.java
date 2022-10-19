@@ -33,6 +33,7 @@ public abstract class ExceptionController {
     @ExceptionHandler(value = Exception.class)
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     private ExceptionDTO otherExceptionsHandler(Exception exception) {
+        exception.printStackTrace();
         return buildExceptionDtoInfo(exception, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

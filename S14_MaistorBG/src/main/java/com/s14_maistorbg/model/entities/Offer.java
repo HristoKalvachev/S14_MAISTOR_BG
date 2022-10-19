@@ -13,11 +13,11 @@ public class Offer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Column
-    private String adType;
-    //    @Column
-//    private String offerDescription;
-//    @Column
-//    private int budget;
+    private String offerTitle;
+    @Column
+    private String jobDescription;
+    @Column
+    private double budget;
     @Column
     private int cityId;
     @Column

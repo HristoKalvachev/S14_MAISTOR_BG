@@ -1,6 +1,5 @@
 package com.s14_maistorbg.controller;
 
-import com.s14_maistorbg.model.dto.ExceptionDTO;
 import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
 import com.s14_maistorbg.model.repositories.UserRepository;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 
 @RestController
-public class UserController {
+public class UserController extends ExceptionController{
 
     @Autowired
     private UserRepository userRepository;
@@ -51,27 +50,16 @@ public class UserController {
         User updatedUser = userRepository.findById(id)
                 .map(user -> {
                     user.setUsername(newUser.getUsername());
-//                    user.setPassword(newUser.getPassword());
-//                    user.setFirstName(newUser.getFirstName());
-//                    user.setLastName(newUser.getLastName());
-//                    user.setPhoneNumber(newUser.getPhoneNumber());
-//                    user.setProfilePicUrl(newUser.getProfilePicUrl());
+                    user.setPassword(newUser.getPassword());
+                    user.setFirstName(newUser.getFirstName());
+                    user.setLastName(newUser.getLastName());
+                    user.setPhoneNumber(newUser.getPhoneNumber());
+                    user.setProfilePicUrl(newUser.getProfilePicUrl());
                     return userRepository.save(user);
                 })
                 .orElseThrow(() -> new BadRequestException("The profile can not be edited!"));
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
-
-    @ExceptionHandler(BadRequestException.class)
-    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    private ExceptionDTO badRequestHandler(Exception exception) {
-        ExceptionDTO exceptionDTO = new ExceptionDTO();
-        exceptionDTO.setDateTime(LocalDateTime.now());
-        exceptionDTO.setMsg(exception.getMessage());
-        exceptionDTO.setStatus(HttpStatus.BAD_REQUEST.value());
-        return exceptionDTO;
-    }
-
 
     private boolean isPhoneValid(User u) {
         String pattern = "^([0|\\+[0-9]{10})";
