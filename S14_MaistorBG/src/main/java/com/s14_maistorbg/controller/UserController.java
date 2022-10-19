@@ -1,46 +1,55 @@
 package com.s14_maistorbg.controller;
 
+
+
+import com.s14_maistorbg.model.dto.users.LoginDTO;
+import com.s14_maistorbg.model.dto.users.RegisterDTO;
+import com.s14_maistorbg.model.dto.users.UserWithoutPassDTO;
+
 import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
 import com.s14_maistorbg.model.repositories.UserRepository;
+import com.s14_maistorbg.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import javax.servlet.http.HttpSession;
 
 @RestController
-public class UserController extends ExceptionController{
+
+public class UserController extends ExceptionController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/users")
-    @ResponseStatus(code = HttpStatus.CREATED)
-    public User register(@RequestBody User user) {
-        System.out.println(user.getUsername());
-        System.out.println(user.getPassword());
-        System.out.println(user.getFirstName());
-        System.out.println(user.getLastName());
-        System.out.println(user.getPhoneNumber());
-        System.out.println(user.getEmail());
-        if (!isPhoneValid(user)) {
-            throw new BadRequestException("Not valid phone number!");
-        }
-        userRepository.save(user);
-        return user;
+    public UserWithoutPassDTO register(@RequestBody RegisterDTO dto) {
+        return userService.register(dto);
     }
 
+    @PostMapping("/auth")
+    public UserWithoutPassDTO login(@RequestBody LoginDTO dto, HttpSession session){
+        UserWithoutPassDTO result = userService.login(dto);
+        if (result != null){
+            session.setAttribute("LOGGED", true);
+            session.setAttribute("USER_ID", result.getId());
+            session.setAttribute("FIRST_NAME", result.getFirstName());
+            session.setAttribute("LAST_NAME", result.getLastName());
+            session.setAttribute("ROLE_ID", result.getRoleId());
+            return result;
+        }else {
+            throw new BadRequestException("Wrong Credentials!");
+        }
+    }
+
+
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<User> delete(User user, @PathVariable int id){
-
-        User userForDelete = userRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException("User does not exist!"));
-
-        userRepository.delete(userForDelete);
-        return new ResponseEntity<>(userForDelete, HttpStatus.OK);
-
+    public UserWithoutPassDTO delete(@PathVariable int id){
+        return userService.delete(id);
     }
 
 
@@ -68,6 +77,5 @@ public class UserController extends ExceptionController{
         }
         return false;
     }
-
 
 }
