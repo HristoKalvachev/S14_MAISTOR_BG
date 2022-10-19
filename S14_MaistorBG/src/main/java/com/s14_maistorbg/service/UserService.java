@@ -10,6 +10,8 @@ import com.s14_maistorbg.model.repositories.UserRepository;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.modelmapper.ModelMapper;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private PasswordEncoder encoder;
 
     public UserWithoutPassDTO login(LoginDTO dto) {
         String username = dto.getUsername();
@@ -56,6 +60,7 @@ public class UserService {
             throw new BadRequestException("Invalid phone number!");
         }
         User user = modelMapper.map(dto, User.class);
+        user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
         return modelMapper.map(user, UserWithoutPassDTO.class);
     }
