@@ -1,13 +1,14 @@
 package com.s14_maistorbg.controller;
 
 
-
+import com.s14_maistorbg.model.dto.craftsmanDTOs.RateCraftsManDTO;
 import com.s14_maistorbg.model.dto.users.LoginDTO;
 import com.s14_maistorbg.model.dto.users.RegisterDTO;
 import com.s14_maistorbg.model.dto.users.UserWithoutPassDTO;
 
 import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
+import com.s14_maistorbg.model.exceptions.UnauthorizedException;
 import com.s14_maistorbg.model.repositories.UserRepository;
 import com.s14_maistorbg.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.http.HttpSession;
 
 @RestController
@@ -32,22 +34,22 @@ public class UserController extends ExceptionController {
     }
 
     @PostMapping("/auth")
-    public UserWithoutPassDTO login(@RequestBody LoginDTO dto, HttpSession session){
+    public UserWithoutPassDTO login(@RequestBody LoginDTO dto, HttpSession session) {
         UserWithoutPassDTO result = userService.login(dto);
-        if (result != null){
+        if (result != null) {
             session.setAttribute("LOGGED", true);
             session.setAttribute("USER_ID", result.getId());
             session.setAttribute("FIRST_NAME", result.getFirstName());
             session.setAttribute("LAST_NAME", result.getLastName());
             session.setAttribute("ROLE_ID", result.getRoleId());
             return result;
-        }else {
+        } else {
             throw new BadRequestException("Wrong Credentials!");
         }
     }
 
     @DeleteMapping("/users/{id}")
-    public UserWithoutPassDTO delete(@PathVariable int id){
+    public UserWithoutPassDTO delete(@PathVariable int id) {
         return userService.delete(id);
     }
 
@@ -67,6 +69,16 @@ public class UserController extends ExceptionController {
                 })
                 .orElseThrow(() -> new BadRequestException("The profile can not be edited!"));
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    }
+
+    @PostMapping("/users/rate/{id}")
+    public RateCraftsManDTO rateCraftMan(@RequestBody RateCraftsManDTO dto, HttpSession session, @PathVariable int id) {
+
+        int craftsmanRoleID = 1;
+        if (userRepository.findById(id).get().getRoleId()!=1) {
+            throw new UnauthorizedException("Craftsmen can`t rate other craftsman!");
+        }
+        return userService.rateCraftsman(id, dto.getRating());
     }
 
 }
