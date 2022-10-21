@@ -25,7 +25,6 @@ public class OfferService {
     @Autowired
     private UserRepository userRepository;
 
-
     public ResponseOfferDTO postOffer(ResponseOfferDTO offerDTO, int ownerId) {
         User user = userRepository.findById(ownerId).orElseThrow(()-> new NotFoundException("User not found!"));
         modelMapper.getConfiguration().setAmbiguityIgnored(true);

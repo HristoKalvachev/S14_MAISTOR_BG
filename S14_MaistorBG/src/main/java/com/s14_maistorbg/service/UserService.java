@@ -3,6 +3,7 @@ package com.s14_maistorbg.service;
 
 import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.craftsmanDTOs.RateCraftsManDTO;
+import com.s14_maistorbg.model.dto.users.EditUserDTO;
 import com.s14_maistorbg.model.dto.users.LoginDTO;
 import com.s14_maistorbg.model.dto.users.RegisterDTO;
 import com.s14_maistorbg.model.dto.users.UserWithoutPassDTO;
@@ -13,6 +14,7 @@ import com.s14_maistorbg.model.exceptions.NotFoundException;
 import com.s14_maistorbg.model.exceptions.UnauthorizedException;
 import com.s14_maistorbg.model.repositories.CraftsManRepository;
 import com.s14_maistorbg.model.repositories.UserRepository;
+import com.s14_maistorbg.utility.UserUtility;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -77,16 +79,15 @@ public class UserService extends AbstractService {
         if (!dto.getPassword().equals(dto.getConfirmPassword())) {
             throw new BadRequestException("Passwords mismatch!");
         }
-        if (!isEmailValid(dto)) {
+        if (!UserUtility.isEmailValid(dto.getEmail())) {
             throw new BadRequestException("Invalid email!");
         }
-        if (!isPassValid(dto)) {
+        if (!UserUtility.isPassValid(dto)) {
             throw new BadRequestException("Invalid password!");
         }
-        if (!isPhoneValid(dto)) {
+        if (!UserUtility.isPhoneValid(dto.getPhoneNumber())) {
             throw new BadRequestException("Invalid phone number!");
         }
-
         User user = modelMapper.map(dto, User.class);
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
@@ -103,36 +104,23 @@ public class UserService extends AbstractService {
         return modelMapper.map(user, UserWithoutPassDTO.class);
     }
 
-    private boolean isPhoneValid(RegisterDTO user) {
-        Pattern p = Pattern.compile("0[0-9]{9}");
-        Matcher m = p.matcher(user.getPhoneNumber());
-        boolean hasMatch = m.matches();
-        if (hasMatch) {
-            return true;
-        }
-        return false;
-    }
 
-    private boolean isEmailValid(RegisterDTO dto) {
-        return EmailValidator.getInstance(true).isValid(dto.getEmail());
-    }
-
-    private boolean isPassValid(RegisterDTO dto) {
-        /*
-        Must have at least one numeric character
-        Must have at least one lowercase character
-        Must have at least one uppercase character
-        Must have at least one special symbol among @#$%
-        Password length should be between 8 and 20
-         */
-        String regex = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{8,20}$";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(dto.getPassword());
-        boolean hasMatch = m.matches();
-        if (hasMatch) {
-            return true;
+    public EditUserDTO editAccount(EditUserDTO newUser, int id){
+        if (!UserUtility.isEmailValid(newUser.getEmail())) {
+            throw new BadRequestException("Invalid email!");
         }
-        return false;
+        if (!UserUtility.isPhoneValid(newUser.getPhoneNumber())) {
+            throw new BadRequestException("Invalid phone number!");
+        }
+        Optional<User> editedUser = userRepository.findById(id);
+        EditUserDTO dto = modelMapper.map(editedUser, EditUserDTO.class);
+        dto.setUsername(newUser.getUsername());
+        dto.setFirstName(newUser.getFirstName());
+        dto.setLastName(newUser.getLastName());
+        dto.setPhoneNumber(newUser.getPhoneNumber());
+        dto.setProfilePicUrl(newUser.getProfilePicUrl());
+        userRepository.save(modelMapper.map(dto, User.class));
+        return dto;
     }
 
     public UserWithoutPassDTO delete(int id) {

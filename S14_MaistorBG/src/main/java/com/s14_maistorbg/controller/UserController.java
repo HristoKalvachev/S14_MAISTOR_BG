@@ -2,6 +2,7 @@ package com.s14_maistorbg.controller;
 
 
 import com.s14_maistorbg.model.dto.craftsmanDTOs.RateCraftsManDTO;
+import com.s14_maistorbg.model.dto.users.EditUserDTO;
 import com.s14_maistorbg.model.dto.users.LoginDTO;
 import com.s14_maistorbg.model.dto.users.RegisterDTO;
 import com.s14_maistorbg.model.dto.users.UserWithoutPassDTO;
@@ -41,31 +42,10 @@ public class UserController extends ExceptionController {
         if (result != null) {
             logUser(request, result.getId());
             return result;
-//            public UserWithoutPassDTO login (@RequestBody LoginDTO dto, HttpSession session){
-//                UserWithoutPassDTO result = userService.login(dto);
-//                if (result != null) {
-//                    session.setAttribute("LOGGED", true);
-//                    session.setAttribute("USER_ID", result.getId());
-//                    session.setAttribute("FIRST_NAME", result.getFirstName());
-//                    session.setAttribute("LAST_NAME", result.getLastName());
-//                    session.setAttribute("ROLE_ID", result.getRoleId());
-//                    return result;
         } else {
             throw new BadRequestException("Wrong Credentials!");
         }
     }
-
-//    public UserWithoutPassDTO login(@RequestBody LoginDTO dto, HttpSession session) {
-//        UserWithoutPassDTO result = userService.login(dto);
-//        if (result != null) {
-//            session.setAttribute("LOGGED", true);
-//            session.setAttribute("USER_ID", result.getId());
-//            session.setAttribute("FIRST_NAME", result.getFirstName());
-//            session.setAttribute("LAST_NAME", result.getLastName());
-//            session.setAttribute("ROLE_ID", result.getRoleId());
-//
-//
-//    }
 
     @GetMapping("/users/{userId}")
     public UserWithoutPassDTO getById(@PathVariable int userId) {
@@ -83,28 +63,15 @@ public class UserController extends ExceptionController {
         return userService.delete(id);
     }
 
-
     @PutMapping("/users/{id}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public ResponseEntity<User> editAccount(@RequestBody User newUser, @PathVariable int id) {
-        User updatedUser = userRepository.findById(id)
-                .map(user -> {
-                    user.setUsername(newUser.getUsername());
-                    user.setPassword(newUser.getPassword());
-                    user.setFirstName(newUser.getFirstName());
-                    user.setLastName(newUser.getLastName());
-                    user.setPhoneNumber(newUser.getPhoneNumber());
-                    user.setProfilePicUrl(newUser.getProfilePicUrl());
-                    return userRepository.save(user);
-                })
-                .orElseThrow(() -> new BadRequestException("The profile can not be edited!"));
-        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    public ResponseEntity<EditUserDTO> editAccount(@RequestBody EditUserDTO newUser, HttpServletRequest request) {
+        getLoggedUserId(request);
+        return ResponseEntity.ok(userService.editAccount(newUser, Integer.parseInt(request.getSession().getId())));
     }
 
     @PostMapping("/users/rate/{id}")
     public RateCraftsManDTO rateCraftMan(@RequestBody RateCraftsManDTO dto, HttpSession session, @PathVariable int id) {
-
-
         int craftsmanRoleID = 1;
         if (userRepository.findById(id).get().getRoleId() != 1) {
             throw new UnauthorizedException("Craftsmen can`t rate other craftsman!");
