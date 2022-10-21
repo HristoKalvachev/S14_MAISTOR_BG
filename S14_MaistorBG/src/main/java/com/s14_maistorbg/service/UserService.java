@@ -1,10 +1,7 @@
 package com.s14_maistorbg.service;
 
-<<<<<<< HEAD
 import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
-=======
 import com.s14_maistorbg.model.dto.craftsmanDTOs.RateCraftsManDTO;
->>>>>>> 3fb5e378946ef4b98f0693947bcab0c13b935896
 import com.s14_maistorbg.model.dto.users.LoginDTO;
 import com.s14_maistorbg.model.dto.users.RegisterDTO;
 import com.s14_maistorbg.model.dto.users.UserWithoutPassDTO;
@@ -27,7 +24,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService extends AbstractService{
+public class UserService extends AbstractService {
 
     @Autowired
     private UserRepository userRepository;
@@ -41,60 +38,60 @@ public class UserService extends AbstractService{
     public UserWithoutPassDTO login(LoginDTO dto) {
         String username = dto.getUsername();
         String password = dto.getPassword();
-        if (!validateUsername(username) || !validatePassword(password)){
+        if (!validateUsername(username) || !validatePassword(password)) {
             throw new BadRequestException("The fields are mandatory!");
         }
         Optional<User> user = userRepository.findByUsername(username);
-        if (user.isPresent()){
+        if (user.isPresent()) {
             User u = user.get();
-            if (encoder.matches(password, u.getPassword())){
+            if (encoder.matches(password, u.getPassword())) {
                 return modelMapper.map(user.get(), UserWithoutPassDTO.class);
-            }else {
+            } else {
                 throw new UnauthorizedException("Wrong credentials!");
             }
-        }else {
+        } else {
             throw new UnauthorizedException("Wrong credentials!");
         }
     }
 
     private boolean validatePassword(String password) {
-        if (password == null || password.isBlank()){
+        if (password == null || password.isBlank()) {
             return false;
         }
         return true;
     }
 
     private boolean validateUsername(String username) {
-        if (username == null || username.isBlank()){
+        if (username == null || username.isBlank()) {
             return false;
         }
         return true;
     }
 
-    public UserWithoutPassDTO register(RegisterDTO dto){
+    public UserWithoutPassDTO register(RegisterDTO dto) {
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
-        if (userRepository.findByUsername(dto.getUsername()).isPresent()){
+        if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
             throw new BadRequestException("The username exist!");
         }
-        if (!dto.getPassword().equals(dto.getConfirmPassword())){
+        if (!dto.getPassword().equals(dto.getConfirmPassword())) {
             throw new BadRequestException("Passwords mismatch!");
         }
-        if(!isEmailValid(dto)){
+        if (!isEmailValid(dto)) {
             throw new BadRequestException("Invalid email!");
         }
-        if (!isPassValid(dto)){
+        if (!isPassValid(dto)) {
             throw new BadRequestException("Invalid password!");
         }
-        if (!isPhoneValid(dto)){
+        if (!isPhoneValid(dto)) {
             throw new BadRequestException("Invalid phone number!");
         }
 
         User user = modelMapper.map(dto, User.class);
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
-        if(user.getRoleId()==1){
-           User craftsmanToAdd= userRepository.findByUsername(user.getUsername())
-                   .orElseThrow(() -> new NotFoundException("User is not add!"));
+        if (user.getRoleId() == 1) {
+            User craftsmanToAdd = userRepository.findByUsername(user.getUsername())
+                    .orElseThrow(() -> new NotFoundException("User is not add!"));
             Craftsman craftsman = new Craftsman();
             craftsman.setUserId(craftsmanToAdd.getId());
             craftsman.setRating(0);
@@ -115,11 +112,11 @@ public class UserService extends AbstractService{
         return false;
     }
 
-    private boolean isEmailValid(RegisterDTO dto){
+    private boolean isEmailValid(RegisterDTO dto) {
         return EmailValidator.getInstance(true).isValid(dto.getEmail());
     }
 
-    private boolean isPassValid(RegisterDTO dto){
+    private boolean isPassValid(RegisterDTO dto) {
         /*
         Must have at least one numeric character
         Must have at least one lowercase character
@@ -131,8 +128,8 @@ public class UserService extends AbstractService{
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(dto.getPassword());
         boolean hasMatch = m.matches();
-        if (hasMatch){
-            return  true;
+        if (hasMatch) {
+            return true;
         }
         return false;
     }
@@ -149,26 +146,26 @@ public class UserService extends AbstractService{
         UserWithoutPassDTO dto = modelMapper.map(user, UserWithoutPassDTO.class);
         dto.setPosts(user.getMyOffers().stream().map(p -> modelMapper.map(p, PostWithoutOwnerDTO.class)).collect(Collectors.toList()));
         return dto;
+    }
 
     public RateCraftsManDTO rateCraftsman(int id, double rate) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
-        if(rate<1 || rate>10){
+        if (rate < 1 || rate > 10) {
             throw new BadRequestException("Rate must be between 1 and 10!");
         }
         Craftsman craftsman = craftsManRepository.findById(user.getId())
                 .orElseThrow(() -> new NotFoundException("Craftsman not found!"));
         int currentTotalRateSum = craftsman.getRating();
         int peopleRated = craftsman.getNumberUsersRated();
-        currentTotalRateSum+=rate;
-        peopleRated+=1;
+        currentTotalRateSum += rate;
+        peopleRated += 1;
         craftsman.setRating(currentTotalRateSum);
         craftsman.setNumberUsersRated(peopleRated);
-        double rating =(double) currentTotalRateSum/peopleRated;
+        double rating = (double) currentTotalRateSum / peopleRated;
         RateCraftsManDTO rateCraftsManDTO = new RateCraftsManDTO();
         rateCraftsManDTO.setRating(rating);
         rateCraftsManDTO.setUsername(user.getUsername());
         craftsManRepository.save(craftsman);
         return rateCraftsManDTO;
-
     }
 }

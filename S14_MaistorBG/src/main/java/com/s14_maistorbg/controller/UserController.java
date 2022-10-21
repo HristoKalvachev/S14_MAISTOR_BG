@@ -15,15 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.AbstractController;
 
 
 import javax.servlet.http.HttpServletRequest;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.http.HttpSession;
 
 @RestController
 
-public class UserController extends AbstractController {
+public class UserController extends ExceptionController {
 
     @Autowired
     private UserRepository userRepository;
@@ -36,33 +36,32 @@ public class UserController extends AbstractController {
     }
 
     @PostMapping("/auth")
-
-    public UserWithoutPassDTO login(@RequestBody LoginDTO dto, HttpServletRequest request){
-        UserWithoutPassDTO result = userService.login(dto);
-        if (result != null){
-            logUser(request, result.getId());
-
-    public UserWithoutPassDTO login(@RequestBody LoginDTO dto, HttpSession session) {
+    public UserWithoutPassDTO login(@RequestBody LoginDTO dto, HttpServletRequest request) {
         UserWithoutPassDTO result = userService.login(dto);
         if (result != null) {
-            session.setAttribute("LOGGED", true);
-            session.setAttribute("USER_ID", result.getId());
-            session.setAttribute("FIRST_NAME", result.getFirstName());
-            session.setAttribute("LAST_NAME", result.getLastName());
-            session.setAttribute("ROLE_ID", result.getRoleId());
+            logUser(request, result.getId());
             return result;
+//            public UserWithoutPassDTO login (@RequestBody LoginDTO dto, HttpSession session){
+//                UserWithoutPassDTO result = userService.login(dto);
+//                if (result != null) {
+//                    session.setAttribute("LOGGED", true);
+//                    session.setAttribute("USER_ID", result.getId());
+//                    session.setAttribute("FIRST_NAME", result.getFirstName());
+//                    session.setAttribute("LAST_NAME", result.getLastName());
+//                    session.setAttribute("ROLE_ID", result.getRoleId());
+//                    return result;
         } else {
             throw new BadRequestException("Wrong Credentials!");
         }
     }
 
     @GetMapping("/users/{userId}")
-    public UserWithoutPassDTO getById(@PathVariable int userId){
+    public UserWithoutPassDTO getById(@PathVariable int userId) {
         return userService.getById(userId);
     }
 
     @PostMapping("/logout")
-    public void logout(HttpSession session){
+    public void logout(HttpSession session) {
         session.invalidate();
         System.out.println("You are successful logout! See you next time.");
     }
@@ -93,11 +92,11 @@ public class UserController extends AbstractController {
     @PostMapping("/users/rate/{id}")
     public RateCraftsManDTO rateCraftMan(@RequestBody RateCraftsManDTO dto, HttpSession session, @PathVariable int id) {
 
+
         int craftsmanRoleID = 1;
-        if (userRepository.findById(id).get().getRoleId()!=1) {
+        if (userRepository.findById(id).get().getRoleId() != 1) {
             throw new UnauthorizedException("Craftsmen can`t rate other craftsman!");
         }
         return userService.rateCraftsman(id, dto.getRating());
     }
-
 }
