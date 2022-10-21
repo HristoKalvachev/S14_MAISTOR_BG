@@ -1,5 +1,6 @@
 package com.s14_maistorbg.service;
 
+
 import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.craftsmanDTOs.RateCraftsManDTO;
 import com.s14_maistorbg.model.dto.users.LoginDTO;
@@ -147,6 +148,7 @@ public class UserService extends AbstractService {
         dto.setPosts(user.getMyOffers().stream().map(p -> modelMapper.map(p, PostWithoutOwnerDTO.class)).collect(Collectors.toList()));
         return dto;
     }
+
 
     public RateCraftsManDTO rateCraftsman(int id, double rate) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));

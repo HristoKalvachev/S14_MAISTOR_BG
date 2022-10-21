@@ -55,6 +55,18 @@ public class UserController extends ExceptionController {
         }
     }
 
+//    public UserWithoutPassDTO login(@RequestBody LoginDTO dto, HttpSession session) {
+//        UserWithoutPassDTO result = userService.login(dto);
+//        if (result != null) {
+//            session.setAttribute("LOGGED", true);
+//            session.setAttribute("USER_ID", result.getId());
+//            session.setAttribute("FIRST_NAME", result.getFirstName());
+//            session.setAttribute("LAST_NAME", result.getLastName());
+//            session.setAttribute("ROLE_ID", result.getRoleId());
+//
+//
+//    }
+
     @GetMapping("/users/{userId}")
     public UserWithoutPassDTO getById(@PathVariable int userId) {
         return userService.getById(userId);
