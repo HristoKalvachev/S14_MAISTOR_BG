@@ -21,6 +21,4 @@ public class Craftsman {
     @Column
     private int repairCategoryId;
 
-
-
 }

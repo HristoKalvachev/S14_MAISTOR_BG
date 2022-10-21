@@ -1,22 +1,25 @@
 package com.s14_maistorbg.service;
 
+<<<<<<< HEAD
 import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
+=======
+import com.s14_maistorbg.model.dto.craftsmanDTOs.RateCraftsManDTO;
+>>>>>>> 3fb5e378946ef4b98f0693947bcab0c13b935896
 import com.s14_maistorbg.model.dto.users.LoginDTO;
 import com.s14_maistorbg.model.dto.users.RegisterDTO;
 import com.s14_maistorbg.model.dto.users.UserWithoutPassDTO;
+import com.s14_maistorbg.model.entities.Craftsman;
 import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
+import com.s14_maistorbg.model.exceptions.NotFoundException;
 import com.s14_maistorbg.model.exceptions.UnauthorizedException;
+import com.s14_maistorbg.model.repositories.CraftsManRepository;
 import com.s14_maistorbg.model.repositories.UserRepository;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.modelmapper.ModelMapper;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -28,6 +31,8 @@ public class UserService extends AbstractService{
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private CraftsManRepository craftsManRepository;
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
@@ -83,9 +88,20 @@ public class UserService extends AbstractService{
         if (!isPhoneValid(dto)){
             throw new BadRequestException("Invalid phone number!");
         }
+
         User user = modelMapper.map(dto, User.class);
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
+        if(user.getRoleId()==1){
+           User craftsmanToAdd= userRepository.findByUsername(user.getUsername())
+                   .orElseThrow(() -> new NotFoundException("User is not add!"));
+            Craftsman craftsman = new Craftsman();
+            craftsman.setUserId(craftsmanToAdd.getId());
+            craftsman.setRating(0);
+            craftsman.setNumberUsersRated(0);
+            craftsman.setRepairCategoryId(1);
+            craftsManRepository.save(craftsman);
+        }
         return modelMapper.map(user, UserWithoutPassDTO.class);
     }
 
@@ -133,5 +149,26 @@ public class UserService extends AbstractService{
         UserWithoutPassDTO dto = modelMapper.map(user, UserWithoutPassDTO.class);
         dto.setPosts(user.getMyOffers().stream().map(p -> modelMapper.map(p, PostWithoutOwnerDTO.class)).collect(Collectors.toList()));
         return dto;
+
+    public RateCraftsManDTO rateCraftsman(int id, double rate) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
+        if(rate<1 || rate>10){
+            throw new BadRequestException("Rate must be between 1 and 10!");
+        }
+        Craftsman craftsman = craftsManRepository.findById(user.getId())
+                .orElseThrow(() -> new NotFoundException("Craftsman not found!"));
+        int currentTotalRateSum = craftsman.getRating();
+        int peopleRated = craftsman.getNumberUsersRated();
+        currentTotalRateSum+=rate;
+        peopleRated+=1;
+        craftsman.setRating(currentTotalRateSum);
+        craftsman.setNumberUsersRated(peopleRated);
+        double rating =(double) currentTotalRateSum/peopleRated;
+        RateCraftsManDTO rateCraftsManDTO = new RateCraftsManDTO();
+        rateCraftsManDTO.setRating(rating);
+        rateCraftsManDTO.setUsername(user.getUsername());
+        craftsManRepository.save(craftsman);
+        return rateCraftsManDTO;
+
     }
 }
