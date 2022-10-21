@@ -5,9 +5,11 @@ import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.offerDTOs.ResponseOfferDTO;
 import com.s14_maistorbg.model.dto.users.UserWithoutPostsDTO;
 import com.s14_maistorbg.model.entities.Offer;
+import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
 import com.s14_maistorbg.model.exceptions.NotFoundException;
 import com.s14_maistorbg.model.repositories.OfferRepository;
+import com.s14_maistorbg.model.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +22,12 @@ public class OfferService {
     private OfferRepository offerRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private UserRepository userRepository;
+
 
     public ResponseOfferDTO postOffer(ResponseOfferDTO offerDTO, int ownerId) {
+        User user = userRepository.findById(ownerId).orElseThrow(()-> new NotFoundException("User not found!"));
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         Offer offer = modelMapper.map(offerDTO, Offer.class);
         if (offer.getOfferTitle().trim().length() < 10) {
@@ -33,7 +39,7 @@ public class OfferService {
         if (offer.getBudget() < 0) {
             throw new BadRequestException("Budget must be positive!");
         }
-//        offer.setOwnerId(ownerId);
+        offer.setOwner(user);
         offerRepository.save(offer);
         return modelMapper.map(offer, ResponseOfferDTO.class);
 

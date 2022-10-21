@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 
-public abstract class AbstractController {
+public abstract class ExceptionController {
 
     private static final String LOGGED = "LOGGED";
     private static final String USER_ID = "USER_ID";

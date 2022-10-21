@@ -1,10 +1,10 @@
 package com.s14_maistorbg.service;
 
-<<<<<<< HEAD
+
 import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
-=======
+
 import com.s14_maistorbg.model.dto.craftsmanDTOs.RateCraftsManDTO;
->>>>>>> 3fb5e378946ef4b98f0693947bcab0c13b935896
+
 import com.s14_maistorbg.model.dto.users.LoginDTO;
 import com.s14_maistorbg.model.dto.users.RegisterDTO;
 import com.s14_maistorbg.model.dto.users.UserWithoutPassDTO;
@@ -149,13 +149,14 @@ public class UserService extends AbstractService{
         UserWithoutPassDTO dto = modelMapper.map(user, UserWithoutPassDTO.class);
         dto.setPosts(user.getMyOffers().stream().map(p -> modelMapper.map(p, PostWithoutOwnerDTO.class)).collect(Collectors.toList()));
         return dto;
+    }
 
-    public RateCraftsManDTO rateCraftsman(int id, double rate) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
+    public RateCraftsManDTO rateCraftsman(int id, double rate){
+        User user1 = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
         if(rate<1 || rate>10){
             throw new BadRequestException("Rate must be between 1 and 10!");
         }
-        Craftsman craftsman = craftsManRepository.findById(user.getId())
+        Craftsman craftsman = craftsManRepository.findById(user1.getId())
                 .orElseThrow(() -> new NotFoundException("Craftsman not found!"));
         int currentTotalRateSum = craftsman.getRating();
         int peopleRated = craftsman.getNumberUsersRated();
@@ -166,9 +167,8 @@ public class UserService extends AbstractService{
         double rating =(double) currentTotalRateSum/peopleRated;
         RateCraftsManDTO rateCraftsManDTO = new RateCraftsManDTO();
         rateCraftsManDTO.setRating(rating);
-        rateCraftsManDTO.setUsername(user.getUsername());
+        rateCraftsManDTO.setUsername(user1.getUsername());
         craftsManRepository.save(craftsman);
         return rateCraftsManDTO;
-
     }
 }
