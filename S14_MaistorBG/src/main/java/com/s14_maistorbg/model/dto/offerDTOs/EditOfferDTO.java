@@ -6,7 +6,7 @@ import lombok.Data;
 public class EditOfferDTO {
 
     private String offerTitle;
-    private String jobDescription;
+    private String jobDecscription;
     private double budget;
     private int cityId;
     private int repairCategoryId;

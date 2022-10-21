@@ -1,5 +1,6 @@
 package com.s14_maistorbg.service;
 
+import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.users.LoginDTO;
 import com.s14_maistorbg.model.dto.users.RegisterDTO;
 import com.s14_maistorbg.model.dto.users.UserWithoutPassDTO;
@@ -20,9 +21,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
-public class UserService {
+public class UserService extends AbstractService{
 
     @Autowired
     private UserRepository userRepository;
@@ -34,12 +36,34 @@ public class UserService {
     public UserWithoutPassDTO login(LoginDTO dto) {
         String username = dto.getUsername();
         String password = dto.getPassword();
-        Optional<User> user = userRepository.findByUsernameAndPassword(username, password);
+        if (!validateUsername(username) || !validatePassword(password)){
+            throw new BadRequestException("The fields are mandatory!");
+        }
+        Optional<User> user = userRepository.findByUsername(username);
         if (user.isPresent()){
-            return modelMapper.map(user.get(), UserWithoutPassDTO.class);
+            User u = user.get();
+            if (encoder.matches(password, u.getPassword())){
+                return modelMapper.map(user.get(), UserWithoutPassDTO.class);
+            }else {
+                throw new UnauthorizedException("Wrong credentials!");
+            }
         }else {
             throw new UnauthorizedException("Wrong credentials!");
         }
+    }
+
+    private boolean validatePassword(String password) {
+        if (password == null || password.isBlank()){
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateUsername(String username) {
+        if (username == null || username.isBlank()){
+            return false;
+        }
+        return true;
     }
 
     public UserWithoutPassDTO register(RegisterDTO dto){
@@ -102,5 +126,12 @@ public class UserService {
                 .orElseThrow(() -> new BadRequestException("User does not exist!"));
         userRepository.delete(userForDelete);
         return modelMapper.map(userForDelete, UserWithoutPassDTO.class);
+    }
+
+    public UserWithoutPassDTO getById(int userId) {
+        User user = getUserById(userId);
+        UserWithoutPassDTO dto = modelMapper.map(user, UserWithoutPassDTO.class);
+        dto.setPosts(user.getMyOffers().stream().map(p -> modelMapper.map(p, PostWithoutOwnerDTO.class)).collect(Collectors.toList()));
+        return dto;
     }
 }

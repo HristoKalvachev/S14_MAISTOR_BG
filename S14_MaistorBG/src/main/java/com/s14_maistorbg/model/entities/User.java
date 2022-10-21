@@ -5,13 +5,13 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
 @Table(name = "users")
 public class User {
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -35,5 +35,8 @@ public class User {
     private String profilePicUrl;
     @Column
     private int roleId;
+
+    @OneToMany(mappedBy = "owner")
+    private List<Offer> myOffers;
 
 }

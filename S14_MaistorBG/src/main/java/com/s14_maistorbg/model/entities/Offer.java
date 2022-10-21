@@ -15,13 +15,18 @@ public class Offer {
     @Column
     private String offerTitle;
     @Column
-    private String jobDescription;
+    private String jobDecscription;
     @Column
     private double budget;
     @Column
     private int cityId;
     @Column
     private int repairCategoryId;
-    @Column
-    private int ownerId;
+//    @Column
+//    private int ownerId;
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private User owner;
+
+
 }

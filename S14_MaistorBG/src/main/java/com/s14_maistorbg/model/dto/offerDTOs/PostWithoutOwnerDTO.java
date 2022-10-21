@@ -7,7 +7,7 @@ public class PostWithoutOwnerDTO {
 
     private int id;
     private String offerTitle;
-    private String jobDescription;
+    private String jobDecscription;
     private double budget;
     private int cityId;
     private int repairCategoryId;

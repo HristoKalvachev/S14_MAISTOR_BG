@@ -3,6 +3,7 @@ package com.s14_maistorbg.service;
 import com.s14_maistorbg.model.dto.offerDTOs.EditOfferDTO;
 import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.offerDTOs.ResponseOfferDTO;
+import com.s14_maistorbg.model.dto.users.UserWithoutPostsDTO;
 import com.s14_maistorbg.model.entities.Offer;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
 import com.s14_maistorbg.model.exceptions.NotFoundException;
@@ -20,34 +21,37 @@ public class OfferService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public ResponseOfferDTO postOffer(ResponseOfferDTO offerDTO) {
+    public ResponseOfferDTO postOffer(ResponseOfferDTO offerDTO, int ownerId) {
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         Offer offer = modelMapper.map(offerDTO, Offer.class);
-        if (offer.getOfferTitle().trim().length() < 5) {
+        if (offer.getOfferTitle().trim().length() < 10) {
             throw new BadRequestException("Write a more describing title!");
         }
-        if (offer.getJobDescription().trim().length() < 10) {
+        if (offer.getJobDecscription().trim().length() < 10) {
             throw new BadRequestException("Write a better description!");
         }
         if (offer.getBudget() < 0) {
             throw new BadRequestException("Budget must be positive!");
         }
+//        offer.setOwnerId(ownerId);
         offerRepository.save(offer);
         return modelMapper.map(offer, ResponseOfferDTO.class);
 
     }
 
-    public PostWithoutOwnerDTO findById(int id) {
+    public ResponseOfferDTO findById(int id) {
         Offer wantedOffer = offerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("No such post found!"));
-        return modelMapper.map(wantedOffer, PostWithoutOwnerDTO.class);
+        ResponseOfferDTO dto = modelMapper.map(wantedOffer, ResponseOfferDTO.class);
+        dto.setOwner(modelMapper.map(wantedOffer.getOwner(), UserWithoutPostsDTO.class));
+        return dto;
     }
 
     public PostWithoutOwnerDTO editOffer(int id, EditOfferDTO editOfferDTO) {
         Offer updatedOffer = offerRepository.findById(id)
                 .map(o -> {
                     o.setOfferTitle(editOfferDTO.getOfferTitle());
-                    o.setJobDescription(editOfferDTO.getJobDescription());
+                    o.setJobDecscription(editOfferDTO.getJobDecscription());
                     o.setBudget(editOfferDTO.getBudget());
                     o.setCityId(editOfferDTO.getCityId());
                     o.setRepairCategoryId(editOfferDTO.getRepairCategoryId());

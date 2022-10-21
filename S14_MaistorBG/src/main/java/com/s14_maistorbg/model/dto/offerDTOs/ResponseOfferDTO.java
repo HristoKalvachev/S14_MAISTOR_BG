@@ -1,14 +1,15 @@
 package com.s14_maistorbg.model.dto.offerDTOs;
 
+import com.s14_maistorbg.model.dto.users.UserWithoutPostsDTO;
 import lombok.Data;
 
 @Data
 public class ResponseOfferDTO {
 
     private String offerTitle;
-    private String jobDescription;
+    private String jobDecscription;
     private double budget;
     private int cityId;
     private int repairCategoryId;
-    private int ownerId;
+    private UserWithoutPostsDTO owner;
 }

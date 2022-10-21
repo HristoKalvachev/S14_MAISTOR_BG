@@ -15,11 +15,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @RestController
 
-public class UserController extends ExceptionController {
+public class UserController extends AbstractController {
 
     @Autowired
     private UserRepository userRepository;
@@ -32,18 +33,25 @@ public class UserController extends ExceptionController {
     }
 
     @PostMapping("/auth")
-    public UserWithoutPassDTO login(@RequestBody LoginDTO dto, HttpSession session){
+    public UserWithoutPassDTO login(@RequestBody LoginDTO dto, HttpServletRequest request){
         UserWithoutPassDTO result = userService.login(dto);
         if (result != null){
-            session.setAttribute("LOGGED", true);
-            session.setAttribute("USER_ID", result.getId());
-            session.setAttribute("FIRST_NAME", result.getFirstName());
-            session.setAttribute("LAST_NAME", result.getLastName());
-            session.setAttribute("ROLE_ID", result.getRoleId());
+            logUser(request, result.getId());
             return result;
         }else {
             throw new BadRequestException("Wrong Credentials!");
         }
+    }
+
+    @GetMapping("/users/{userId}")
+    public UserWithoutPassDTO getById(@PathVariable int userId){
+        return userService.getById(userId);
+    }
+
+    @PostMapping("/logout")
+    public void logout(HttpSession session){
+        session.invalidate();
+        System.out.println("You are successful logout! See you next time.");
     }
 
     @DeleteMapping("/users/{id}")

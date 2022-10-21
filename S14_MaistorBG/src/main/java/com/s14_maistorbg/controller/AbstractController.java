@@ -8,9 +8,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 
-public abstract class ExceptionController {
+public abstract class AbstractController {
+
+    private static final String LOGGED = "LOGGED";
+    private static final String USER_ID = "USER_ID";
+    private static final String REMOTE_IP = "REMOTE_IP";
 
     @ExceptionHandler(value = BadRequestException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
@@ -44,4 +50,26 @@ public abstract class ExceptionController {
         exceptionDTO.setStatus(status.value());
         return exceptionDTO;
     }
+
+    public void logUser(HttpServletRequest request, int id){
+        HttpSession session = request.getSession();
+        session.setAttribute(LOGGED, true);
+        session.setAttribute(USER_ID, id);
+        session.setAttribute(REMOTE_IP, request.getRemoteAddr());
+    }
+
+    public int getLoggedUserId(HttpServletRequest request){
+        HttpSession session = request.getSession();
+        String ip = request.getRemoteAddr();
+        System.out.println(session.getAttribute(LOGGED));
+        System.out.println(session.getAttribute(USER_ID));
+        if (session.isNew() ||
+            session.getAttribute(LOGGED) == null ||
+            (!(boolean) session.getAttribute(LOGGED)) ||
+            !session.getAttribute(REMOTE_IP).equals(ip)){
+            throw new UnauthorizedException("You are not logged!");
+        }
+        return (int) session.getAttribute(USER_ID);
+    }
+
 }
