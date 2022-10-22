@@ -27,15 +27,16 @@ public class User {
     private String phoneNumber;
     @Column
     private String email;
-    @Column
-    private int cityId;
+    @ManyToOne
+    @JoinColumn(name = "city_id")
+    private City ownerID;
     @Column
     private LocalDate registeredAt;
     @Column
     private String profilePicUrl;
-    @Column
-    private int roleId;
-
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role roleId;
     @OneToMany(mappedBy = "owner")
     private List<Offer> myOffers;
 

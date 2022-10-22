@@ -18,12 +18,12 @@ public class Offer {
     private String jobDecscription;
     @Column
     private double budget;
-    @Column
-    private int cityId;
-    @Column
-    private int repairCategoryId;
-//    @Column
-//    private int ownerId;
+    @ManyToOne
+    @JoinColumn(name = "city_id")
+    private City cityId;
+    @ManyToOne
+    @JoinColumn(name = "repair_category_id")
+    private Category repairCategoryId;
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;

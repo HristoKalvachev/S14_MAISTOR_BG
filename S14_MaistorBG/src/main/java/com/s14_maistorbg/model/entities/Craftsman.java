@@ -2,10 +2,7 @@ package com.s14_maistorbg.model.entities;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -18,7 +15,8 @@ public class Craftsman {
     private int rating;
     @Column
     private int numberUsersRated;
-    @Column
-    private int repairCategoryId;
+    @ManyToOne
+    @JoinColumn(name = "repair_category_id")
+    private Category category;
 
 }
