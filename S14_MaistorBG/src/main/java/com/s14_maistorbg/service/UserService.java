@@ -101,7 +101,6 @@ public class UserService extends AbstractService {
             craftsman.setId(craftsmanToAdd.getId());
             craftsman.setRating(0);
             craftsman.setNumberUsersRated(0);
-            craftsman.setCategory(craftsman.getCategory());
             craftsManRepository.save(craftsman);
         }
         return modelMapper.map(user, UserWithoutPassDTO.class);
