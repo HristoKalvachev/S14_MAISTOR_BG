@@ -12,9 +12,9 @@ public class City {
     private int cityId;
     @Column
     private String name;
-    @OneToMany(mappedBy = "cityOwner")
+    @OneToMany(mappedBy = "city")
     private List<User> ownerID;
-    @OneToMany(mappedBy = "cityId")
+    @OneToMany(mappedBy = "city")
     private List<Offer> offers;
-    
+
 }

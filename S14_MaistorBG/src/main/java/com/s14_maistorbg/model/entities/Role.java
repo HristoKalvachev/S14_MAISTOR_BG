@@ -14,6 +14,6 @@ public class Role {
     private int roleId;
     @Column
     private String role_type;
-    @OneToMany(mappedBy = "roleOwner")
-    private List<User> ownerID;
+    @OneToMany(mappedBy = "role")
+    private List<User> owners;
 }

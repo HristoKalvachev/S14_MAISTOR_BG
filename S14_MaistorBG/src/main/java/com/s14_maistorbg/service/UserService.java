@@ -88,7 +88,7 @@ public class UserService extends AbstractService {
         User user = modelMapper.map(dto, User.class);
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
-        if (user.getRoleId().getRoleId() == 1) {
+        if (user.getRole().getRoleId() == 1) {
             User craftsmanToAdd = userRepository.findByUsername(user.getUsername())
                     .orElseThrow(() -> new NotFoundException("User is not add!"));
             Craftsman craftsman = new Craftsman();

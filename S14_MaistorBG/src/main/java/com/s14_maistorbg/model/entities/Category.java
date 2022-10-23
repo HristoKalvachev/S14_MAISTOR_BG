@@ -15,7 +15,7 @@ public class Category {
     private int cityId;
     @Column
     private String type;
-    @OneToMany(mappedBy = "cityOwner")
+    @OneToMany(mappedBy = "category")
     private List<Craftsman> ownerID;
     @OneToMany(mappedBy = "repairCategoryId")
     private List<Offer> offers;

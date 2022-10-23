@@ -29,14 +29,14 @@ public class User {
     private String email;
     @ManyToOne
     @JoinColumn(name = "city_id")
-    private City ownerID;
+    private City city;
     @Column
     private LocalDate registeredAt;
     @Column
     private String profilePicUrl;
     @ManyToOne
     @JoinColumn(name = "role_id")
-    private Role roleId;
+    private Role role;
     @OneToMany(mappedBy = "owner")
     private List<Offer> myOffers;
 

@@ -20,7 +20,7 @@ public class Offer {
     private double budget;
     @ManyToOne
     @JoinColumn(name = "city_id")
-    private City cityId;
+    private City city;
     @ManyToOne
     @JoinColumn(name = "repair_category_id")
     private Category repairCategoryId;
