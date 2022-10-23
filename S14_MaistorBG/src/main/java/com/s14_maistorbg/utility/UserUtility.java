@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public abstract class UserUtility {
 
-    public static boolean isPassValid(RegisterDTO dto) {
+    public static boolean isPassValid(String password) {
         /*
         Must have at least one numeric character
         Must have at least one lowercase character
@@ -18,7 +18,7 @@ public abstract class UserUtility {
          */
         String regex = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{8,20}$";
         Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(dto.getPassword());
+        Matcher m = p.matcher(password);
         boolean hasMatch = m.matches();
         if (hasMatch) {
             return true;

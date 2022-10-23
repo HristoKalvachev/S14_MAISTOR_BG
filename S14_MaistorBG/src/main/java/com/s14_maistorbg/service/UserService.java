@@ -3,10 +3,7 @@ package com.s14_maistorbg.service;
 
 import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.craftsmanDTOs.RateCraftsManDTO;
-import com.s14_maistorbg.model.dto.users.EditUserDTO;
-import com.s14_maistorbg.model.dto.users.LoginDTO;
-import com.s14_maistorbg.model.dto.users.RegisterDTO;
-import com.s14_maistorbg.model.dto.users.UserWithoutPassDTO;
+import com.s14_maistorbg.model.dto.users.*;
 import com.s14_maistorbg.model.entities.Craftsman;
 import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
@@ -82,7 +79,7 @@ public class UserService extends AbstractService {
         if (!UserUtility.isEmailValid(dto.getEmail())) {
             throw new BadRequestException("Invalid email!");
         }
-        if (!UserUtility.isPassValid(dto)) {
+        if (!UserUtility.isPassValid(dto.getPassword())) {
             throw new BadRequestException("Invalid password!");
         }
         if (!UserUtility.isPhoneValid(dto.getPhoneNumber())) {
@@ -91,21 +88,21 @@ public class UserService extends AbstractService {
         User user = modelMapper.map(dto, User.class);
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
-        if (user.getRoleId() == 1) {
+        if (user.getRoleId().getRoleId() == 1) {
             User craftsmanToAdd = userRepository.findByUsername(user.getUsername())
                     .orElseThrow(() -> new NotFoundException("User is not add!"));
             Craftsman craftsman = new Craftsman();
             craftsman.setUserId(craftsmanToAdd.getId());
             craftsman.setRating(0);
             craftsman.setNumberUsersRated(0);
-            craftsman.setRepairCategoryId(1);
+            craftsman.setCategory(craftsman.getCategory());
             craftsManRepository.save(craftsman);
         }
         return modelMapper.map(user, UserWithoutPassDTO.class);
     }
 
 
-    public EditUserDTO editAccount(EditUserDTO newUser, int id){
+    public EditUserDTO editAccount(EditUserDTO newUser, int id) {
         if (!UserUtility.isEmailValid(newUser.getEmail())) {
             throw new BadRequestException("Invalid email!");
         }
@@ -157,5 +154,22 @@ public class UserService extends AbstractService {
         rateCraftsManDTO.setUsername(user.getUsername());
         craftsManRepository.save(craftsman);
         return rateCraftsManDTO;
+    }
+
+    public String changePassword(ChangePasswordDTO dto, int id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("No user found!"));
+        if (!dto.getPassword().equals(user.getPassword())) {
+            throw new BadRequestException("Incorrect password!");
+        }
+        if (!UserUtility.isPassValid(dto.getPassword())) {
+            throw new BadRequestException("Password is weak!");
+        }
+        if (!dto.getNewPassword().equals(dto.getConfirmNewPassword())) {
+            throw new BadRequestException("Password mismatch!");
+        }
+        user.setPassword(dto.getNewPassword());
+        userRepository.save(user);
+
+        return "Password changed successfully!";
     }
 }

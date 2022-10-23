@@ -2,12 +2,8 @@ package com.s14_maistorbg.controller;
 
 
 import com.s14_maistorbg.model.dto.craftsmanDTOs.RateCraftsManDTO;
-import com.s14_maistorbg.model.dto.users.EditUserDTO;
-import com.s14_maistorbg.model.dto.users.LoginDTO;
-import com.s14_maistorbg.model.dto.users.RegisterDTO;
-import com.s14_maistorbg.model.dto.users.UserWithoutPassDTO;
+import com.s14_maistorbg.model.dto.users.*;
 
-import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
 import com.s14_maistorbg.model.exceptions.UnauthorizedException;
 import com.s14_maistorbg.model.repositories.UserRepository;
@@ -16,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.AbstractController;
-
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -73,9 +67,14 @@ public class UserController extends ExceptionController {
     @PostMapping("/users/rate/{id}")
     public RateCraftsManDTO rateCraftMan(@RequestBody RateCraftsManDTO dto, HttpSession session, @PathVariable int id) {
         int craftsmanRoleID = 1;
-        if (userRepository.findById(id).get().getRoleId() != 1) {
+        if (userRepository.findById(id).get().getRoleId().getRoleId() != 1) {
             throw new UnauthorizedException("Craftsmen can`t rate other craftsman!");
         }
         return userService.rateCraftsman(id, dto.getRating());
+    }
+
+    @PutMapping("/users/edit/{id}")
+    public String changePassword(@RequestBody ChangePasswordDTO dto, @PathVariable int id){
+       return userService.changePassword(dto,id);
     }
 }

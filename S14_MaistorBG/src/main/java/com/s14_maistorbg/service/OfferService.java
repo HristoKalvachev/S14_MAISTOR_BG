@@ -58,8 +58,6 @@ public class OfferService {
                     o.setOfferTitle(editOfferDTO.getOfferTitle());
                     o.setJobDecscription(editOfferDTO.getJobDecscription());
                     o.setBudget(editOfferDTO.getBudget());
-                    o.setCityId(editOfferDTO.getCityId());
-                    o.setRepairCategoryId(editOfferDTO.getRepairCategoryId());
                     return offerRepository.save(o);
                 }).orElseThrow(() -> new NotFoundException("No such user found!"));
         return modelMapper.map(updatedOffer, PostWithoutOwnerDTO.class);
