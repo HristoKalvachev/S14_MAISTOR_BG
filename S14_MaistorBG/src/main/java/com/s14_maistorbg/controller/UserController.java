@@ -66,8 +66,8 @@ public class UserController extends ExceptionController {
 
     @PostMapping("/users/rate/{id}")
     public RateCraftsManDTO rateCraftMan(@RequestBody RateCraftsManDTO dto, HttpSession session, @PathVariable int id) {
-        int craftsmanRoleID = 1;
-        if (userRepository.findById(id).get().getRole().getId() != 1) {
+        int craftsmanRoleID = 2;
+        if (userRepository.findById(id).get().getRole().getId() != craftsmanRoleID) {
             throw new UnauthorizedException("Craftsmen can`t rate other craftsman!");
         }
         return userService.rateCraftsman(id, dto.getRating());

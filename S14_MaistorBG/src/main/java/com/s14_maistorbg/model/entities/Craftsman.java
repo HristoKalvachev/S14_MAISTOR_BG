@@ -11,7 +11,7 @@ public class Craftsman {
 
     @Id
     @Column
-    private int id;
+    private int userId;
     @Column
     private int rating;
     @Column
