@@ -4,11 +4,13 @@ package com.s14_maistorbg.service;
 import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.craftsmanDTOs.RateCraftsManDTO;
 import com.s14_maistorbg.model.dto.users.*;
+import com.s14_maistorbg.model.entities.City;
 import com.s14_maistorbg.model.entities.Craftsman;
 import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
 import com.s14_maistorbg.model.exceptions.NotFoundException;
 import com.s14_maistorbg.model.exceptions.UnauthorizedException;
+import com.s14_maistorbg.model.repositories.CityRepository;
 import com.s14_maistorbg.model.repositories.CraftsManRepository;
 import com.s14_maistorbg.model.repositories.UserRepository;
 import com.s14_maistorbg.utility.UserUtility;
@@ -30,6 +32,8 @@ public class UserService extends AbstractService {
     private UserRepository userRepository;
     @Autowired
     private CraftsManRepository craftsManRepository;
+    @Autowired
+    private CityRepository cityRepository;
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
@@ -86,13 +90,15 @@ public class UserService extends AbstractService {
             throw new BadRequestException("Invalid phone number!");
         }
         User user = modelMapper.map(dto, User.class);
+//        City city = cityRepository.findByCityId(dto.getCityId()).orElseThrow(()-> new NotFoundException("City not found"));
         user.setPassword(encoder.encode(user.getPassword()));
+        System.out.println(user.getCity());
         userRepository.save(user);
-        if (user.getRole().getRoleId() == 1) {
+        if (user.getRole().getId() == 2) {
             User craftsmanToAdd = userRepository.findByUsername(user.getUsername())
                     .orElseThrow(() -> new NotFoundException("User is not add!"));
             Craftsman craftsman = new Craftsman();
-            craftsman.setUserId(craftsmanToAdd.getId());
+            craftsman.setId(craftsmanToAdd.getId());
             craftsman.setRating(0);
             craftsman.setNumberUsersRated(0);
             craftsman.setCategory(craftsman.getCategory());

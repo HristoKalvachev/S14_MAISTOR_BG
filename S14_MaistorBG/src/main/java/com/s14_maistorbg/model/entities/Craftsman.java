@@ -10,7 +10,8 @@ import javax.persistence.*;
 public class Craftsman {
 
     @Id
-    private int userId;
+    @Column
+    private int id;
     @Column
     private int rating;
     @Column

@@ -28,7 +28,7 @@ public class User {
     @Column
     private String email;
     @ManyToOne
-    @JoinColumn(name = "city_id")
+    @JoinColumn(name = "city_id", nullable = false)
     private City city;
     @Column
     private LocalDate registeredAt;
