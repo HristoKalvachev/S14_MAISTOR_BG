@@ -12,7 +12,7 @@ public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int cityId;
+    private int id;
     @Column
     private String type;
     @OneToMany(mappedBy = "category")

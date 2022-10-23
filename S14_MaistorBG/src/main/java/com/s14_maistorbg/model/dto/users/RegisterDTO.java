@@ -1,5 +1,6 @@
 package com.s14_maistorbg.model.dto.users;
 
+import com.s14_maistorbg.model.entities.Category;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -18,6 +19,6 @@ public class RegisterDTO {
     private LocalDate registeredAt;
     private String profilePicUrl;
     private int roleId;
-
+    private int repairCategoryId;
 
 }

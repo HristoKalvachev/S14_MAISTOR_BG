@@ -4,25 +4,23 @@ package com.s14_maistorbg.service;
 import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.craftsmanDTOs.RateCraftsManDTO;
 import com.s14_maistorbg.model.dto.users.*;
-import com.s14_maistorbg.model.entities.City;
+import com.s14_maistorbg.model.entities.Category;
 import com.s14_maistorbg.model.entities.Craftsman;
 import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
 import com.s14_maistorbg.model.exceptions.NotFoundException;
 import com.s14_maistorbg.model.exceptions.UnauthorizedException;
+import com.s14_maistorbg.model.repositories.CategoryRepository;
 import com.s14_maistorbg.model.repositories.CityRepository;
 import com.s14_maistorbg.model.repositories.CraftsManRepository;
 import com.s14_maistorbg.model.repositories.UserRepository;
 import com.s14_maistorbg.utility.UserUtility;
-import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.modelmapper.ModelMapper;
 
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +32,8 @@ public class UserService extends AbstractService {
     private CraftsManRepository craftsManRepository;
     @Autowired
     private CityRepository cityRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
@@ -97,10 +97,16 @@ public class UserService extends AbstractService {
         if (user.getRole().getId() == 2) {
             User craftsmanToAdd = userRepository.findByUsername(user.getUsername())
                     .orElseThrow(() -> new NotFoundException("User is not add!"));
+
             Craftsman craftsman = new Craftsman();
-            craftsman.setId(craftsmanToAdd.getId());
+            Category category = new Category();
+            category.setId(dto.getRepairCategoryId());
+            Category category1 = categoryRepository.findById(dto.getRepairCategoryId()).orElseThrow(()-> new NotFoundException("Category not found!"));
+            category.setType(category1.getType());
+            craftsman.setUserId(craftsmanToAdd.getId());
             craftsman.setRating(0);
             craftsman.setNumberUsersRated(0);
+            craftsman.setCategory(category);
             craftsManRepository.save(craftsman);
         }
         return modelMapper.map(user, UserWithoutPassDTO.class);
