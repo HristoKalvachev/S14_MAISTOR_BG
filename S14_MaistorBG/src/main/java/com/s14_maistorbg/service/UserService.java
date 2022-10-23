@@ -30,19 +30,6 @@ import java.util.stream.Collectors;
 @Service
 public class UserService extends AbstractService {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private CraftsManRepository craftsManRepository;
-    @Autowired
-    private CityRepository cityRepository;
-    @Autowired
-    private CategoryRepository categoryRepository;
-    @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
-    private PasswordEncoder encoder;
-
     public UserWithoutPassDTO login(LoginDTO dto) {
         String username = dto.getUsername();
         String password = dto.getPassword();
@@ -94,7 +81,7 @@ public class UserService extends AbstractService {
             throw new BadRequestException("Invalid phone number!");
         }
         User user = modelMapper.map(dto, User.class);
-//        City city = cityRepository.findByCityId(dto.getCityId()).orElseThrow(()-> new NotFoundException("City not found"));
+        cityRepository.findById(dto.getCityId()).orElseThrow(()-> new NotFoundException("City not found"));
         user.setPassword(encoder.encode(user.getPassword()));
         System.out.println(user.getCity());
         userRepository.save(user);

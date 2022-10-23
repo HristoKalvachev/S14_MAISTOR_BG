@@ -39,5 +39,7 @@ public class User {
     private Role role;
     @OneToMany(mappedBy = "owner")
     private List<Offer> myOffers;
+    @OneToMany(mappedBy = "commentOwner")
+    private List<Comment> myComments;
 
 }
