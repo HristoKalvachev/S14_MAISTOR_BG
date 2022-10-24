@@ -1,6 +1,5 @@
 package com.s14_maistorbg.utility;
 
-import com.s14_maistorbg.model.dto.users.RegisterDTO;
 import org.apache.commons.validator.routines.EmailValidator;
 
 import java.util.regex.Matcher;

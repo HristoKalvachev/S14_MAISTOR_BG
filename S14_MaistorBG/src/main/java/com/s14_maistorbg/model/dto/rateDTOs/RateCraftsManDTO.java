@@ -1,4 +1,4 @@
-package com.s14_maistorbg.model.dto.craftsmanDTOs;
+package com.s14_maistorbg.model.dto.rateDTOs;
 
 import lombok.Data;
 
@@ -8,5 +8,5 @@ import lombok.Data;
 public class RateCraftsManDTO {
 
     private String username;
-    private double rating;
+    private int rating;
 }

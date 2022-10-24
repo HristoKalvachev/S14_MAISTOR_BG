@@ -2,24 +2,16 @@ package com.s14_maistorbg.service;
 
 
 import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
-import com.s14_maistorbg.model.dto.craftsmanDTOs.RateCraftsManDTO;
-import com.s14_maistorbg.model.dto.users.*;
+import com.s14_maistorbg.model.dto.rateDTOs.RateCraftsManDTO;
+import com.s14_maistorbg.model.dto.userDTOs.*;
 import com.s14_maistorbg.model.entities.Category;
 import com.s14_maistorbg.model.entities.Craftsman;
 import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
 import com.s14_maistorbg.model.exceptions.NotFoundException;
 import com.s14_maistorbg.model.exceptions.UnauthorizedException;
-import com.s14_maistorbg.model.repositories.CategoryRepository;
-import com.s14_maistorbg.model.repositories.CityRepository;
-import com.s14_maistorbg.model.repositories.CraftsManRepository;
-import com.s14_maistorbg.model.repositories.UserRepository;
 import com.s14_maistorbg.utility.UserUtility;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.modelmapper.ModelMapper;
-
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -126,22 +118,6 @@ public class UserService extends AbstractService {
         UserWithoutPassDTO dto = modelMapper.map(user, UserWithoutPassDTO.class);
         dto.setPosts(user.getMyOffers().stream().map(p -> modelMapper.map(p, PostWithoutOwnerDTO.class)).collect(Collectors.toList()));
         return dto;
-    }
-
-
-    public RateCraftsManDTO rateCraftsman(int id, RateCraftsManDTO dto) {
-        User user = userRepository.findByUsername(dto.getUsername()).orElseThrow(() -> new NotFoundException("User not found!"));
-        if (dto.getRating() < 1 || dto.getRating() > 10) {
-            throw new BadRequestException("Rate must be between 1 and 10!");
-        }
-        Craftsman craftsman = craftsManRepository.findById(user.getId())
-                .orElseThrow(() -> new NotFoundException("Craftsman not found!"));
-
-        RateCraftsManDTO rateCraftsManDTO = new RateCraftsManDTO();
-
-        rateCraftsManDTO.setUsername(user.getUsername());
-        craftsManRepository.save(craftsman);
-        return rateCraftsManDTO;
     }
 
     public String changePassword(ChangePasswordDTO dto, int id) {

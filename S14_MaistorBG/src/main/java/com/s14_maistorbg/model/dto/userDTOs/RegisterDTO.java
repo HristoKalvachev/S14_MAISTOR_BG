@@ -1,6 +1,5 @@
-package com.s14_maistorbg.model.dto.users;
+package com.s14_maistorbg.model.dto.userDTOs;
 
-import com.s14_maistorbg.model.entities.Category;
 import lombok.Data;
 
 import java.time.LocalDate;

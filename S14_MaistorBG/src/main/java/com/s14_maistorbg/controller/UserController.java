@@ -1,11 +1,9 @@
 package com.s14_maistorbg.controller;
 
 
-import com.s14_maistorbg.model.dto.craftsmanDTOs.RateCraftsManDTO;
-import com.s14_maistorbg.model.dto.users.*;
+import com.s14_maistorbg.model.dto.userDTOs.*;
 
 import com.s14_maistorbg.model.exceptions.BadRequestException;
-import com.s14_maistorbg.model.exceptions.UnauthorizedException;
 import com.s14_maistorbg.model.repositories.UserRepository;
 import com.s14_maistorbg.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,15 +60,6 @@ public class UserController extends ExceptionController {
     public ResponseEntity<EditUserDTO> editAccount(@RequestBody EditUserDTO newUser, HttpServletRequest request) {
         getLoggedUserId(request);
         return ResponseEntity.ok(userService.editAccount(newUser, Integer.parseInt(request.getSession().getId())));
-    }
-
-    @PostMapping("/users/rate/{id}")
-    public RateCraftsManDTO rateCraftMan(@RequestBody RateCraftsManDTO dto, HttpSession session, @PathVariable int id) {
-        int craftsmanRoleID = 2;
-        if (userRepository.findById(id).get().getRole().getId() != craftsmanRoleID) {
-            throw new UnauthorizedException("Craftsmen can`t rate other craftsman!");
-        }
-        return userService.rateCraftsman(id, dto);
     }
 
     @PutMapping("/users/edit/{id}")

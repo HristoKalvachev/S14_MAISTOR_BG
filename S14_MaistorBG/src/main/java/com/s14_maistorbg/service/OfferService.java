@@ -3,7 +3,7 @@ package com.s14_maistorbg.service;
 import com.s14_maistorbg.model.dto.offerDTOs.EditOfferDTO;
 import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.offerDTOs.ResponseOfferDTO;
-import com.s14_maistorbg.model.dto.users.UserWithoutPostsDTO;
+import com.s14_maistorbg.model.dto.userDTOs.UserWithoutPostsDTO;
 import com.s14_maistorbg.model.entities.Offer;
 import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
