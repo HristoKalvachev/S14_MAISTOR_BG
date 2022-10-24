@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface CraftsManRepository extends JpaRepository<Craftsman,Integer> {
 
     Optional<Craftsman> findCraftsmanByCategory(Category category);
-    Optional<Craftsman> findById(int id);
+    Optional<Craftsman> findByUserId(int id);
 
 }

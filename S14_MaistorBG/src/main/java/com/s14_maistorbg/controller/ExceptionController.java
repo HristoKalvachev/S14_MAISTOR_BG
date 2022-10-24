@@ -2,6 +2,7 @@ package com.s14_maistorbg.controller;
 
 import com.s14_maistorbg.model.dto.ExceptionDTO;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
+import com.s14_maistorbg.model.exceptions.ForbiddenException;
 import com.s14_maistorbg.model.exceptions.NotFoundException;
 import com.s14_maistorbg.model.exceptions.UnauthorizedException;
 import org.springframework.http.HttpStatus;
@@ -36,12 +37,19 @@ public abstract class ExceptionController {
         return buildExceptionDtoInfo(exception, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(value = ForbiddenException.class)
+    @ResponseStatus(code = HttpStatus.FORBIDDEN)
+    private ExceptionDTO forbiddenHandler(Exception exception) {
+        return buildExceptionDtoInfo(exception, HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(value = Exception.class)
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     private ExceptionDTO otherExceptionsHandler(Exception exception) {
         exception.printStackTrace();
         return buildExceptionDtoInfo(exception, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 
     private ExceptionDTO buildExceptionDtoInfo(Exception exception, HttpStatus status){
         ExceptionDTO exceptionDTO = new ExceptionDTO();

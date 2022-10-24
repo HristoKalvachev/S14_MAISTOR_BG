@@ -23,8 +23,8 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "craftsman_id")
     private Craftsman craftsman;
-
-
-
+    @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name = "parent_comment_id"))
+    private Comment parentComment;
 
 }

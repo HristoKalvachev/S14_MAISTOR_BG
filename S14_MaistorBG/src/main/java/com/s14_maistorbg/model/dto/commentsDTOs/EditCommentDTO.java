@@ -4,18 +4,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Setter
 @Getter
 @NoArgsConstructor
-public class AddCommentDTO {
+public class EditCommentDTO {
 
-    private int id;
+    private int commentId;
     private String comment;
-    private LocalDate commentAt;
-    private int craftsmanId;
-    private Optional<Integer> parentCommentId;
+
+
 }
