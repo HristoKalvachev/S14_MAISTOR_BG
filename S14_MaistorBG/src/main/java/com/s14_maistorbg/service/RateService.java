@@ -1,6 +1,7 @@
 package com.s14_maistorbg.service;
 
 import com.s14_maistorbg.model.dto.rateDTOs.RateCraftsManDTO;
+import com.s14_maistorbg.model.dto.rateDTOs.RateDeleteDTO;
 import com.s14_maistorbg.model.dto.rateDTOs.RateResponseDTO;
 import com.s14_maistorbg.model.entities.Craftsman;
 import com.s14_maistorbg.model.entities.Rate;
@@ -9,6 +10,7 @@ import com.s14_maistorbg.model.exceptions.BadRequestException;
 import com.s14_maistorbg.model.exceptions.NotFoundException;
 import com.s14_maistorbg.model.exceptions.UnauthorizedException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 @Service
 public class RateService extends AbstractService {
@@ -55,5 +57,16 @@ public class RateService extends AbstractService {
         rate.setRating(dto.getRating());
         rateRepository.save(rate);
         return modelMapper.map(rate,RateResponseDTO.class);
+    }
+
+    public String unRate(int rateId, RateDeleteDTO dto) {
+        Rate rate = rateRepository.findById(rateId).orElseThrow(() -> new NotFoundException("You first need to rate"));
+        User rater = userRepository.findByUsername(dto.getUsername())
+                .orElseThrow(() -> new NotFoundException("User not found!"));
+        if(rate.getRater().getId()!=rater.getId()){
+            throw new UnauthorizedException("You can`t remove rate!");
+        }
+        rateRepository.delete(rate);
+        return "You have unrated this profile!";
     }
 }
