@@ -13,10 +13,6 @@ public class Craftsman {
     @Id
     @Column
     private int userId;
-    @Column
-    private int rating;
-    @Column
-    private int numberUsersRated;
     @ManyToOne
     @JoinColumn(name = "repair_category_id")
     private Category category;

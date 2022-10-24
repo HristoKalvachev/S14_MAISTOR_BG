@@ -5,7 +5,6 @@ import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.craftsmanDTOs.RateCraftsManDTO;
 import com.s14_maistorbg.model.dto.users.*;
 import com.s14_maistorbg.model.entities.Category;
-import com.s14_maistorbg.model.entities.City;
 import com.s14_maistorbg.model.entities.Craftsman;
 import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
@@ -16,15 +15,12 @@ import com.s14_maistorbg.model.repositories.CityRepository;
 import com.s14_maistorbg.model.repositories.CraftsManRepository;
 import com.s14_maistorbg.model.repositories.UserRepository;
 import com.s14_maistorbg.utility.UserUtility;
-import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.modelmapper.ModelMapper;
 
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,21 +46,36 @@ public class UserService extends AbstractService {
     }
 
     private boolean validatePassword(String password) {
-        if (password == null || password.isBlank()) {
-            return false;
-        }
-        return true;
+        return password != null && !password.isBlank();
     }
 
     private boolean validateUsername(String username) {
-        if (username == null || username.isBlank()) {
-            return false;
-        }
-        return true;
+        return username != null && !username.isBlank();
     }
 
     public UserWithoutPassDTO register(RegisterDTO dto) {
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
+        validateUserInformation(dto);
+        User user = modelMapper.map(dto, User.class);
+        cityRepository.findById(dto.getCityId()).orElseThrow(() -> new NotFoundException("City not found!"));
+        user.setPassword(encoder.encode(user.getPassword()));
+        System.out.println(user.getCity());
+        userRepository.save(user);
+
+        if (user.getRole().getId() == 2) {
+            User craftsmanToAdd = userRepository.findByUsername(user.getUsername())
+                    .orElseThrow(() -> new NotFoundException("User is not add!"));
+
+            Craftsman craftsman = new Craftsman();
+            Category category1 = categoryRepository.findById(dto.getRepairCategoryId()).orElseThrow(() -> new NotFoundException("Category not found!"));
+            craftsman.setUserId(craftsmanToAdd.getId());
+            craftsman.setCategory(category1);
+            craftsManRepository.save(craftsman);
+        }
+        return modelMapper.map(user, UserWithoutPassDTO.class);
+    }
+
+    private void validateUserInformation(RegisterDTO dto) {
         if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
             throw new BadRequestException("The username exist!");
         }
@@ -74,35 +85,16 @@ public class UserService extends AbstractService {
         if (!UserUtility.isEmailValid(dto.getEmail())) {
             throw new BadRequestException("Invalid email!");
         }
+        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new BadRequestException("This email is already registered!");
+        }
         if (!UserUtility.isPassValid(dto.getPassword())) {
             throw new BadRequestException("Invalid password!");
         }
         if (!UserUtility.isPhoneValid(dto.getPhoneNumber())) {
             throw new BadRequestException("Invalid phone number!");
         }
-        User user = modelMapper.map(dto, User.class);
-        cityRepository.findById(dto.getCityId()).orElseThrow(()-> new NotFoundException("City not found"));
-        user.setPassword(encoder.encode(user.getPassword()));
-        System.out.println(user.getCity());
-        userRepository.save(user);
-        if (user.getRole().getId() == 2) {
-            User craftsmanToAdd = userRepository.findByUsername(user.getUsername())
-                    .orElseThrow(() -> new NotFoundException("User is not add!"));
-
-            Craftsman craftsman = new Craftsman();
-            Category category = new Category();
-            category.setId(dto.getRepairCategoryId());
-            Category category1 = categoryRepository.findById(dto.getRepairCategoryId()).orElseThrow(()-> new NotFoundException("Category not found!"));
-            category.setType(category1.getType());
-            craftsman.setUserId(craftsmanToAdd.getId());
-            craftsman.setRating(0);
-            craftsman.setNumberUsersRated(0);
-            craftsman.setCategory(category);
-            craftsManRepository.save(craftsman);
-        }
-        return modelMapper.map(user, UserWithoutPassDTO.class);
     }
-
 
     public EditUserDTO editAccount(EditUserDTO newUser, int id) {
         if (!UserUtility.isEmailValid(newUser.getEmail())) {
@@ -137,22 +129,16 @@ public class UserService extends AbstractService {
     }
 
 
-    public RateCraftsManDTO rateCraftsman(int id, double rate) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
-        if (rate < 1 || rate > 10) {
+    public RateCraftsManDTO rateCraftsman(int id, RateCraftsManDTO dto) {
+        User user = userRepository.findByUsername(dto.getUsername()).orElseThrow(() -> new NotFoundException("User not found!"));
+        if (dto.getRating() < 1 || dto.getRating() > 10) {
             throw new BadRequestException("Rate must be between 1 and 10!");
         }
         Craftsman craftsman = craftsManRepository.findById(user.getId())
                 .orElseThrow(() -> new NotFoundException("Craftsman not found!"));
-        int currentTotalRateSum = craftsman.getRating();
-        int peopleRated = craftsman.getNumberUsersRated();
-        currentTotalRateSum += rate;
-        peopleRated += 1;
-        craftsman.setRating(currentTotalRateSum);
-        craftsman.setNumberUsersRated(peopleRated);
-        double rating = (double) currentTotalRateSum / peopleRated;
+
         RateCraftsManDTO rateCraftsManDTO = new RateCraftsManDTO();
-        rateCraftsManDTO.setRating(rating);
+
         rateCraftsManDTO.setUsername(user.getUsername());
         craftsManRepository.save(craftsman);
         return rateCraftsManDTO;

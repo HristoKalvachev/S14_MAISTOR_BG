@@ -70,7 +70,7 @@ public class UserController extends ExceptionController {
         if (userRepository.findById(id).get().getRole().getId() != craftsmanRoleID) {
             throw new UnauthorizedException("Craftsmen can`t rate other craftsman!");
         }
-        return userService.rateCraftsman(id, dto.getRating());
+        return userService.rateCraftsman(id, dto);
     }
 
     @PutMapping("/users/edit/{id}")
