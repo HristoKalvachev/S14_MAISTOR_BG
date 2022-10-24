@@ -1,6 +1,6 @@
 package com.s14_maistorbg.model.dto.offerDTOs;
 
-import com.s14_maistorbg.model.dto.users.UserWithoutPostsDTO;
+import com.s14_maistorbg.model.dto.userDTOs.UserWithoutPostsDTO;
 import lombok.Data;
 
 @Data

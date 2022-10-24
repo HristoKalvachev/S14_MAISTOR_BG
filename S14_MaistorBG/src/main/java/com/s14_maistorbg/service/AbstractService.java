@@ -19,6 +19,8 @@ public abstract class AbstractService {
     @Autowired
     protected CategoryRepository categoryRepository;
     @Autowired
+    protected RateRepository rateRepository;
+    @Autowired
     protected PasswordEncoder encoder;
     @Autowired
     protected CommentRepository commentRepository;

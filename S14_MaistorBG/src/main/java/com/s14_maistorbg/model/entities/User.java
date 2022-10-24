@@ -41,5 +41,7 @@ public class User {
     private List<Offer> myOffers;
     @OneToMany(mappedBy = "commentOwner")
     private List<Comment> myComments;
+    @OneToMany(mappedBy = "rater")
+    private List<Rate> myGivenRates;
 
 }

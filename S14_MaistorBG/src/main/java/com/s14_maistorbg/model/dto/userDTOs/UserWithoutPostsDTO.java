@@ -1,4 +1,4 @@
-package com.s14_maistorbg.model.dto.users;
+package com.s14_maistorbg.model.dto.userDTOs;
 
 import lombok.Data;
 

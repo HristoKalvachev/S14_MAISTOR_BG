@@ -14,8 +14,10 @@ public class Rate {
     private int id;
     @Column
     private int rating;
-    @Column
-    private int craftsmanId;
-    @Column
-    private int raterId;
+    @ManyToOne
+    @JoinColumn(name = "craftsman_id")
+    private Craftsman craftsman;
+    @ManyToOne
+    @JoinColumn(name = "rater_id")
+    private User rater;
 }

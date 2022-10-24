@@ -52,7 +52,6 @@ public class CommentService extends AbstractService{
         comment.setComment(editCommentDTO.getComment());
         commentRepository.save(comment);
         return modelMapper.map(comment, ResponseCommentDTO.class);
-
     }
 
     public Comment getCommentById(int id){
