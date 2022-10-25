@@ -1,9 +1,14 @@
 package com.s14_maistorbg.model.dto.rateDTOs;
 
 import com.s14_maistorbg.model.dto.userDTOs.UserWithoutPassDTO;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class RateResponseDTO {
 
     private int id;

@@ -1,8 +1,13 @@
 package com.s14_maistorbg.model.dto.offerDTOs;
 
-import lombok.Data;
 
-@Data
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class PostWithoutOwnerDTO {
 
     private int id;

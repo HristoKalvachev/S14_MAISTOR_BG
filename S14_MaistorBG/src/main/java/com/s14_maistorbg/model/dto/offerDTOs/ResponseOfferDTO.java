@@ -1,9 +1,14 @@
 package com.s14_maistorbg.model.dto.offerDTOs;
 
 import com.s14_maistorbg.model.dto.userDTOs.UserWithoutPostsDTO;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class ResponseOfferDTO {
 
     private String offerTitle;

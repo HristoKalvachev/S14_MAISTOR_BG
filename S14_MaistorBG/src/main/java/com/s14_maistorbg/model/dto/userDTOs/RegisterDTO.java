@@ -1,10 +1,14 @@
 package com.s14_maistorbg.model.dto.userDTOs;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class RegisterDTO {
 
     private String username;
