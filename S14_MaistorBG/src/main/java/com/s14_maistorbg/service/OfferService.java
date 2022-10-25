@@ -64,7 +64,7 @@ public class OfferService {
     }
 
     public ResponseOfferDTO deleteOffer(int id) {
-        Offer wantedOffer = offerRepository.findById(id).orElseThrow(() -> new BadRequestException("Can`t delete user!"));
+        Offer wantedOffer = offerRepository.findById(id).orElseThrow(() -> new BadRequestException("No such offer found!"));
         offerRepository.delete(wantedOffer);
         ResponseOfferDTO offerDTO = modelMapper.map(wantedOffer, ResponseOfferDTO.class);
         return offerDTO;
