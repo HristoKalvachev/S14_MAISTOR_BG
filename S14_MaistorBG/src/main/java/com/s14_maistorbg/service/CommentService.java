@@ -1,6 +1,7 @@
 package com.s14_maistorbg.service;
 
 import com.s14_maistorbg.model.dto.commentsDTOs.AddCommentDTO;
+import com.s14_maistorbg.model.dto.commentsDTOs.CommentWithUsernameDTO;
 import com.s14_maistorbg.model.dto.commentsDTOs.EditCommentDTO;
 import com.s14_maistorbg.model.dto.commentsDTOs.ResponseCommentDTO;
 import com.s14_maistorbg.model.entities.Comment;
@@ -11,6 +12,9 @@ import com.s14_maistorbg.model.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class CommentService extends AbstractService{
 
@@ -56,6 +60,24 @@ public class CommentService extends AbstractService{
 
     public Comment getCommentById(int id){
         return commentRepository.findById(id).orElseThrow(()-> new NotFoundException("Comment not found!"));
+    }
+
+    public CommentWithUsernameDTO getCommentWithUsernameDTOById(int id){
+        Comment comment = commentRepository.findById(id).orElseThrow(()-> new NotFoundException("Comment not found!"));
+        return modelMapper.map(comment, CommentWithUsernameDTO.class);
+    }
+
+    public List<CommentWithUsernameDTO> getAllCommentByOwnerId(int ownerId){
+        User user = userRepository.findById(ownerId).orElseThrow(()->new NotFoundException("User not found!"));
+        List<Comment> comments = commentRepository.findAllByCommentOwner(user);
+        List<CommentWithUsernameDTO> commentsWithUsername = new ArrayList<>();
+        for (int i = 0; i < comments.size(); i++) {
+            CommentWithUsernameDTO comment = modelMapper.map(comments.get(i), CommentWithUsernameDTO.class);
+            comment.setOwnerUsername(user.getUsername());
+            comment.setCommentToCraftsmanId(comments.get(i).getCraftsman().getUserId());
+            commentsWithUsername.add(comment);
+        }
+        return commentsWithUsername;
     }
 
 }
