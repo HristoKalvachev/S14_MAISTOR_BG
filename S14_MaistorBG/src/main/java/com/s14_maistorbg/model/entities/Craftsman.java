@@ -33,6 +33,8 @@ public class Craftsman {
     @OneToMany(mappedBy = "craftsman")
 
     private List<Rate> myRatesReceived;
+    @OneToMany(mappedBy = "craftsman")
+    private List<PhotoCraftsman> myPhotos;
 
 
     @ManyToMany

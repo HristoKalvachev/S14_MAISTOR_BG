@@ -1,6 +1,7 @@
 package com.s14_maistorbg.utility;
 
 import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,6 +39,15 @@ public abstract class UserUtility {
 
     public static boolean isEmailValid(String email) {
         return EmailValidator.getInstance(true).isValid(email);
+    }
+
+    public static String getFileExtension(MultipartFile file) {
+        String name = file.getOriginalFilename();
+        int lastIndexOf = name.lastIndexOf(".");
+        if (lastIndexOf == -1) {
+            return ""; // empty extension
+        }
+        return name.substring(lastIndexOf);
     }
 
 }
