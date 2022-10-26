@@ -1,11 +1,16 @@
 package com.s14_maistorbg.model.dto.userDTOs;
 
 import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class UserWithoutPassDTO {
     private int id;
     private String username;

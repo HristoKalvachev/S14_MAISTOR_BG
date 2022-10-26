@@ -14,9 +14,9 @@ public class RateController extends ExceptionController {
     @Autowired
     RateService rateService;
 
-    @PostMapping("/rate/{craftsManId}")
-    public RateResponseDTO rateCraftMan(@RequestBody RateCraftsManDTO dto, @PathVariable int craftsManId) {
-        return rateService.rateCraftsman(craftsManId, dto);
+    @PostMapping("/craftsman/{cId}/rate")
+    public RateResponseDTO rateCraftMan(@RequestBody RateCraftsManDTO dto, @PathVariable int cId) {
+        return rateService.rateCraftsman(cId, dto);
     }
 
     @PutMapping("/rate/{rateId}")

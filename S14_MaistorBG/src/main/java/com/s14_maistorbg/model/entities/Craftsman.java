@@ -1,20 +1,22 @@
 package com.s14_maistorbg.model.entities;
 
+
 import lombok.*;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-//@Setter
-//@Getter
-//@NoArgsConstructor
-//@ToString
-//@EqualsAndHashCode
-@Data
 @Entity
 @Table(name = "craftsman")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Craftsman {
 
     @Id
