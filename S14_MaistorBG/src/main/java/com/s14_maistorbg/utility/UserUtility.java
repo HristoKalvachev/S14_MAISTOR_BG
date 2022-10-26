@@ -35,6 +35,7 @@ public abstract class UserUtility {
         return false;
     }
 
+
     public static boolean isEmailValid(String email) {
         return EmailValidator.getInstance(true).isValid(email);
     }

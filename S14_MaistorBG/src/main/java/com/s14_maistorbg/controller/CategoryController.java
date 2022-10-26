@@ -24,6 +24,7 @@ public class CategoryController extends ExceptionController{
     @ResponseStatus(code = HttpStatus.CREATED)
     public CategoryDTO addCategory(@RequestBody CategoryTypeDTO categoryTypeDTO, HttpServletRequest request) {
         int id = getLoggedUserId(request);
+        verifyAdminRole(request);
         return categoryService.addCategory(categoryTypeDTO);
     }
 
@@ -31,6 +32,7 @@ public class CategoryController extends ExceptionController{
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public CategoryDTO editCategory(@RequestBody CategoryTypeDTO categoryTypeDTO, @PathVariable int cid, HttpServletRequest request){
         int id = getLoggedUserId(request);
+        verifyAdminRole(request);
         return categoryService.editCategory(categoryTypeDTO, cid);
     }
 
@@ -38,6 +40,7 @@ public class CategoryController extends ExceptionController{
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public CategoryDTO deleteCategory(@PathVariable int cid, HttpServletRequest request){
         int id = getLoggedUserId(request);
+        verifyAdminRole(request);
         return categoryService.deleteCategory(cid);
     }
 
