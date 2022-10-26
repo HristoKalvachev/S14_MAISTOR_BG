@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "offers")
@@ -31,6 +32,8 @@ public class Offer {
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
+    @OneToMany(mappedBy = "offer")
+    private List<PhotoOffer> offerPhotos;
 
 
 }

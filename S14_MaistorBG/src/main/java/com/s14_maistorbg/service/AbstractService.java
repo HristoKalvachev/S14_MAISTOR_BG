@@ -24,6 +24,10 @@ public abstract class AbstractService {
     protected PasswordEncoder encoder;
     @Autowired
     protected CommentRepository commentRepository;
+    @Autowired
+    protected PhotoOfferRepository photoOfferRepository;
+    @Autowired
+    protected OfferRepository offerRepository;
 
     protected User getUserById(int userId){
         return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found!"));

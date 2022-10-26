@@ -25,5 +25,7 @@ public class Craftsman {
     private List<Comment> myAccountComments;
     @OneToMany(mappedBy = "craftsman")
     private List<Rate> myRatesReceived;
+    @OneToMany(mappedBy = "craftsman")
+    private List<PhotoCraftsman> myPhotos;
 
 }

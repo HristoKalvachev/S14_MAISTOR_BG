@@ -147,7 +147,7 @@ public class UserService extends AbstractService {
     public String uploadProfilePhoto(int id, MultipartFile file) {
         try {
             User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
-            String ext = getFileExtension(file);
+            String ext = UserUtility.getFileExtension(file);
             String name = "images" + File.separator + System.nanoTime() + ext;
             File f = new File(name);
             if(!f.exists()) {
@@ -167,15 +167,6 @@ public class UserService extends AbstractService {
             e.printStackTrace();
             throw new BadRequestException(e.getMessage(), e);
         }
-    }
-
-    private String getFileExtension(MultipartFile file) {
-        String name = file.getOriginalFilename();
-        int lastIndexOf = name.lastIndexOf(".");
-        if (lastIndexOf == -1) {
-            return ""; // empty extension
-        }
-        return name.substring(lastIndexOf);
     }
 
 }

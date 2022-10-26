@@ -4,7 +4,6 @@ package com.s14_maistorbg.controller;
 import com.s14_maistorbg.model.dto.userDTOs.*;
 
 import com.s14_maistorbg.model.exceptions.BadRequestException;
-import com.s14_maistorbg.model.repositories.UserRepository;
 import com.s14_maistorbg.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,8 +18,6 @@ import javax.servlet.http.HttpSession;
 
 public class UserController extends ExceptionController {
 
-    @Autowired
-    private UserRepository userRepository;
     @Autowired
     private UserService userService;
 
