@@ -1,8 +1,6 @@
 package com.s14_maistorbg.model.dto.categoryDTOs;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Column;
 

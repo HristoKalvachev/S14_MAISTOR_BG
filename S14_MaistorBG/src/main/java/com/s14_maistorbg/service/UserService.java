@@ -1,6 +1,7 @@
 package com.s14_maistorbg.service;
 
 
+import com.s14_maistorbg.model.dto.craftsmanDTOs.CraftsmanDTO;
 import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.rateDTOs.RateCraftsManDTO;
 import com.s14_maistorbg.model.dto.userDTOs.*;
@@ -136,4 +137,6 @@ public class UserService extends AbstractService {
 
         return "Password changed successfully!";
     }
+
+
 }

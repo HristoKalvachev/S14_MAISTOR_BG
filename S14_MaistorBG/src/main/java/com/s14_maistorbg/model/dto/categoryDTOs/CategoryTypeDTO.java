@@ -1,13 +1,8 @@
 package com.s14_maistorbg.model.dto.categoryDTOs;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Setter
-@Getter
-@NoArgsConstructor
+@Data
 public class CategoryTypeDTO {
-
     private String type;
 }
