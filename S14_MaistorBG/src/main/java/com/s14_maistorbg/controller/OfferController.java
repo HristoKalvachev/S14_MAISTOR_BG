@@ -31,13 +31,15 @@ public class OfferController extends ExceptionController {
 
     @PutMapping("/offers/{id}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public PostWithoutOwnerDTO editOffer(@RequestBody EditOfferDTO editOfferDTO, @PathVariable int id) {
+    public PostWithoutOwnerDTO editOffer(@RequestBody EditOfferDTO editOfferDTO, @PathVariable int id, HttpServletRequest request) {
+        int logedUserId = getLoggedUserId(request);
         return offerService.editOffer(id, editOfferDTO);
     }
 
     @DeleteMapping("offers/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public ResponseOfferDTO deleteOffer(@PathVariable int id) {
+    public ResponseOfferDTO deleteOffer(@PathVariable int id, HttpServletRequest request) {
+        int logedUserId = getLoggedUserId(request);
         return offerService.deleteOffer(id);
     }
 
