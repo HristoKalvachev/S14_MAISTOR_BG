@@ -12,6 +12,12 @@ import com.s14_maistorbg.model.exceptions.NotFoundException;
 import com.s14_maistorbg.model.exceptions.UnauthorizedException;
 import com.s14_maistorbg.utility.UserUtility;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -45,6 +51,7 @@ public class UserService extends AbstractService {
         return username != null && !username.isBlank();
     }
 
+    @Transactional
     public UserWithoutPassDTO register(RegisterDTO dto) {
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         validateUserInformation(dto);
@@ -136,4 +143,39 @@ public class UserService extends AbstractService {
 
         return "Password changed successfully!";
     }
+
+    public String uploadProfilePhoto(int id, MultipartFile file) {
+        try {
+            User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
+            String ext = getFileExtension(file);
+            String name = "images" + File.separator + System.nanoTime() + ext;
+            File f = new File(name);
+            if(!f.exists()) {
+                Files.copy(file.getInputStream(), f.toPath());
+            }
+            else{
+                throw new BadRequestException("This file already exists!");
+            }
+            if(user.getProfilePicUrl() != null){
+                File oldProfilePic = new File(user.getProfilePicUrl());
+                oldProfilePic.delete();
+            }
+            user.setProfilePicUrl(name);
+            userRepository.save(user);
+            return name;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new BadRequestException(e.getMessage(), e);
+        }
+    }
+
+    private String getFileExtension(MultipartFile file) {
+        String name = file.getOriginalFilename();
+        int lastIndexOf = name.lastIndexOf(".");
+        if (lastIndexOf == -1) {
+            return ""; // empty extension
+        }
+        return name.substring(lastIndexOf);
+    }
+
 }
