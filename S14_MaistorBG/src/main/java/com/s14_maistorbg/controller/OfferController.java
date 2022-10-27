@@ -23,7 +23,7 @@ public class OfferController extends ExceptionController {
         return offerService.postOffer(offerDTO, id);
     }
 
-    @GetMapping("/offer/{id}")
+    @GetMapping("/offers/{id}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public ResponseOfferDTO findById(@PathVariable int id) {
         return offerService.findById(id);

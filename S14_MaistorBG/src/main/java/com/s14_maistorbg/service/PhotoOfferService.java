@@ -5,6 +5,7 @@ import com.s14_maistorbg.model.entities.PhotoOffer;
 import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
 import com.s14_maistorbg.model.exceptions.NotFoundException;
+import com.s14_maistorbg.model.exceptions.UnauthorizedException;
 import com.s14_maistorbg.utility.UserUtility;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,25 +16,27 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 @Service
-public class PhotoOfferService extends AbstractService{
+public class PhotoOfferService extends AbstractService {
 
     @Transactional
     public String uploadOfferPhoto(int id, MultipartFile file) {
         try {
             Offer offer = offerRepository.findById(id).orElseThrow(() -> new NotFoundException("Offer not found!"));
+            if (offer.getOfferPhotos().size() >= 5) {
+                throw new UnauthorizedException("You can add maximum 5 pictures!");
+            }
             String ext = UserUtility.getFileExtension(file);
             String name = "images" + File.separator + System.nanoTime() + ext;
             File f = new File(name);
-            if(!f.exists()) {
+            if (!f.exists()) {
                 Files.copy(file.getInputStream(), f.toPath());
-            }
-            else{
+            } else {
                 throw new BadRequestException("This file already exists!");
             }
             PhotoOffer photoOffer = new PhotoOffer();
             photoOffer.setOffer(offer);
             photoOffer.setURl(f.getName());
-            offer.getOfferPhotos().add(photoOffer);
+            //offer.getOfferPhotos().add(photoOffer);
             photoOfferRepository.save(photoOffer);
             offerRepository.save(offer);
             return name;
@@ -41,5 +44,17 @@ public class PhotoOfferService extends AbstractService{
             e.printStackTrace();
             throw new BadRequestException(e.getMessage(), e);
         }
+    }
+
+    public void deleteOfferPhoto(int oid, int pid) {
+        Offer offer = offerRepository.findById(oid).orElseThrow(() -> new NotFoundException("Offer not found!"));
+        PhotoOffer photoOffer = photoOfferRepository.findById(pid).orElseThrow(() -> new NotFoundException("Photo not found!"));
+        File file = new File("images"+File.separator+photoOffer.getURl());
+        if(file.delete()){
+        photoOfferRepository.delete(photoOffer);
+        }else {
+            throw new BadRequestException("Can not delete photo!");
+        }
+
     }
 }
