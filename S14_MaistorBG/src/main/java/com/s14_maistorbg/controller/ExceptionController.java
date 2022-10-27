@@ -1,10 +1,13 @@
 package com.s14_maistorbg.controller;
 
 import com.s14_maistorbg.model.dto.ExceptionDTO;
+import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
 import com.s14_maistorbg.model.exceptions.ForbiddenException;
 import com.s14_maistorbg.model.exceptions.NotFoundException;
 import com.s14_maistorbg.model.exceptions.UnauthorizedException;
+import com.s14_maistorbg.model.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -12,12 +15,22 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public abstract class ExceptionController {
 
     private static final String LOGGED = "LOGGED";
     private static final String USER_ID = "USER_ID";
     private static final String REMOTE_IP = "REMOTE_IP";
+    public static final int USER_ROLE_ID = 1;
+    public static final int CRAFTSMAN_ROLE_ID = 2;
+    public static final int ADMIN_ROLE_ID = 3;
+
+    @Autowired
+    private UserRepository userRepository;
+
+
+
 
     @ExceptionHandler(value = BadRequestException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
@@ -80,4 +93,15 @@ public abstract class ExceptionController {
         return (int) session.getAttribute(USER_ID);
     }
 
+    public void verifyAdminRole(HttpServletRequest request){
+        int userId = getLoggedUserId(request);
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()){
+            if (user.get().getRole().getId() != ADMIN_ROLE_ID){
+                throw new ForbiddenException("You do not have admin rights!");
+            }
+        }else {
+            throw new NotFoundException("User is not found!");
+        }
+    }
 }

@@ -94,6 +94,9 @@ public class UserService extends AbstractService {
         if (!UserUtility.isPhoneValid(dto.getPhoneNumber())) {
             throw new BadRequestException("Invalid phone number!");
         }
+        if (userRepository.findByPhoneNumber(dto.getPhoneNumber()).isPresent()){
+            throw new BadRequestException("The phone number exist!");
+        }
     }
 
     public EditUserDTO editAccount(EditUserDTO newUser, int id) {
