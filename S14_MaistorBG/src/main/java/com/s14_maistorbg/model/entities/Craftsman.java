@@ -21,7 +21,6 @@ public class Craftsman {
 
     @Id
     @Column
-
     private int userId;
     @ManyToOne
     @JoinColumn(name = "repair_category_id")
