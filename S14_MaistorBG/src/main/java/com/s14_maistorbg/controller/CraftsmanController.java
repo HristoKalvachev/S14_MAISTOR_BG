@@ -15,14 +15,14 @@ public class CraftsmanController extends ExceptionController{
     @Autowired
     private CraftsmanService craftsmanService;
 
-    @PostMapping("/craftsman_categories/add")
+    @PostMapping("/craftsman_categories")
     @ResponseStatus(code = HttpStatus.CREATED)
     public CraftsmanDTO craftsmanAddCategory(@RequestBody CategoryTypeDTO categoryTypeDTO, HttpServletRequest request){
         int id = getLoggedUserId(request);
         return craftsmanService.craftsmanAddCategory(id, categoryTypeDTO.getType());
     }
 
-    @DeleteMapping("/craftsman_categories/del")
+    @DeleteMapping("/craftsman_categories")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public CraftsmanDTO craftsmanDeleteCategory(@RequestBody CategoryTypeDTO categoryTypeDTO, HttpServletRequest request){
         int id = getLoggedUserId(request);

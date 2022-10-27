@@ -15,6 +15,7 @@ public class CraftsmanService extends AbstractService{
 
     @Transactional
     public CraftsmanDTO craftsmanAddCategory(int id, String categoryName){
+        //Todo refactor everything
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         User userCraftsman = userRepository.findById(id).orElseThrow(()-> new NotFoundException("Craftsman not found!"));
         Craftsman craftsman = craftsManRepository.findById(id).orElseThrow(()-> new NotFoundException("Craftsman not found!"));
@@ -39,6 +40,7 @@ public class CraftsmanService extends AbstractService{
 
     @Transactional
     public CraftsmanDTO craftsmanDeleteCategory(int id, String categoryName){
+        //Todo
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         User userCraftsman = userRepository.findById(id).orElseThrow(()-> new NotFoundException("Craftsman not found!"));
         Craftsman craftsman = craftsManRepository.findById(id).orElseThrow(()-> new NotFoundException("Craftsman not found!"));

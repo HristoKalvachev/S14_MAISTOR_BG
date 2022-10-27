@@ -23,6 +23,7 @@ public class CommentService extends AbstractService{
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         User user = userRepository.findById(userId).orElseThrow(()-> new NotFoundException("User not found!"));
         Craftsman craftsman = craftsManRepository.findById(commentDTO.getCraftsmanId()).orElseThrow(()-> new NotFoundException("User not found!"));
+        //Todo Extract comment check
         if (commentDTO.getComment() == null ||
             commentDTO.getComment().isBlank() ||
             commentDTO.getComment().isEmpty()){
@@ -33,6 +34,7 @@ public class CommentService extends AbstractService{
             throw new BadRequestException("Write a more describing comment!");
         }
         Comment comment = new Comment();
+        //Todo use model mapper
         comment.setComment(commentDTO.getComment());
         comment.setCommentAt(LocalDate.now());
         comment.setCommentOwner(user);
@@ -69,6 +71,7 @@ public class CommentService extends AbstractService{
 
     public List<CommentWithUsernameDTO> getAllCommentByOwnerId(int ownerId){
         User user = userRepository.findById(ownerId).orElseThrow(()->new NotFoundException("User not found!"));
+        //Todo check comment owner field
         List<Comment> comments = commentRepository.findAllByCommentOwner(user);
         List<CommentWithUsernameDTO> commentsWithUsername = new ArrayList<>();
         for (int i = 0; i < comments.size(); i++) {

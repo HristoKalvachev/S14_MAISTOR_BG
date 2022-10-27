@@ -1,5 +1,6 @@
 package com.s14_maistorbg.service;
 
+import com.s14_maistorbg.controller.ExceptionController;
 import com.s14_maistorbg.model.dto.offerDTOs.EditOfferDTO;
 import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.offerDTOs.ResponseOfferDTO;
@@ -32,6 +33,10 @@ public class OfferService {
         User user = userRepository.findById(ownerId).orElseThrow(()-> new NotFoundException("User not found!"));
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         Offer offer = modelMapper.map(offerDTO, Offer.class);
+//        if(user.getRole().getId() == ExceptionController.CRAFTSMAN_ROLE_ID){
+//            throw new BadRequestException("");
+//        }
+        //Todo
         if (offer.getOfferTitle().trim().length() < 10) {
             throw new BadRequestException("Write a more describing title!");
         }

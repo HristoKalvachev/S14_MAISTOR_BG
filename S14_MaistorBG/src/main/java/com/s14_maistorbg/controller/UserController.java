@@ -65,7 +65,7 @@ public class UserController extends ExceptionController {
         return ResponseEntity.ok(userService.editAccount(newUser, Integer.parseInt(request.getSession().getId())));
     }
 
-    @PutMapping("/users/edit/{id}")
+    @PutMapping("/users/change_pass/{id}")
     @ResponseStatus(code = HttpStatus.OK)
     public String changePassword(@RequestBody ChangePasswordDTO dto, @PathVariable int id) {
         return userService.changePassword(dto, id);

@@ -28,7 +28,7 @@ public class CategoryController extends ExceptionController{
         return categoryService.addCategory(categoryTypeDTO);
     }
 
-    @PutMapping("repair_categories/{cid}")
+    @PutMapping("/repair_categories/{cid}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public CategoryDTO editCategory(@RequestBody CategoryTypeDTO categoryTypeDTO, @PathVariable int cid, HttpServletRequest request){
         int id = getLoggedUserId(request);
@@ -36,7 +36,7 @@ public class CategoryController extends ExceptionController{
         return categoryService.editCategory(categoryTypeDTO, cid);
     }
 
-    @DeleteMapping("repair_categories/{cid}")
+    @DeleteMapping("/repair_categories/{cid}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public CategoryDTO deleteCategory(@PathVariable int cid, HttpServletRequest request){
         int id = getLoggedUserId(request);
@@ -44,7 +44,7 @@ public class CategoryController extends ExceptionController{
         return categoryService.deleteCategory(cid);
     }
 
-    @GetMapping("/repair_categories/all")
+    @GetMapping("/repair_categories")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public ResponseEntity<List<CategoryDTO>> getAllCategories(){
         return ResponseEntity.ok(categoryService.getAllCategories());

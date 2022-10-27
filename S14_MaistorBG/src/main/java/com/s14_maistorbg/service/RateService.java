@@ -17,6 +17,7 @@ import java.util.Optional;
 @Service
 public class RateService extends AbstractService {
 
+    //Todo ASK KRASI HOW TO REFACTOR FINDBYID METHODS
     public RateResponseDTO rateCraftsman(int craftsmanId, RateCraftsManDTO dto) {
         Craftsman craftsMan = craftsManRepository.findById(craftsmanId)
                 .orElseThrow(() -> new NotFoundException("Craftsman to be rated not found!"));
@@ -27,6 +28,7 @@ public class RateService extends AbstractService {
 
         int craftsmanRoleID = 2;
         Optional<Rate> checkForAlreadyGivenRate = rateRepository.findByRaterAndCraftsman(rater, craftsMan);
+        //Todo extract validations
         if (checkForAlreadyGivenRate.isPresent()) {
             throw new UnauthorizedException("You have already rated this user!");
         }

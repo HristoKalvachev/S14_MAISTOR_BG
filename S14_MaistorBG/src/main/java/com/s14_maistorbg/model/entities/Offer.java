@@ -34,6 +34,11 @@ public class Offer {
     private User owner;
     @OneToMany(mappedBy = "offer")
     private List<PhotoOffer> offerPhotos;
+    @OneToMany(mappedBy = "appliedOffer")
+    private List<ApplicationForOffer> applicationsForOffer;
+    @OneToOne(mappedBy = "selectedOffer")
+    private ApplicationForOffer selectedApplication;
+
 
 
 }
