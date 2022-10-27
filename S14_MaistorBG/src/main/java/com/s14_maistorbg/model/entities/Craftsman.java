@@ -44,4 +44,6 @@ public class Craftsman {
             inverseJoinColumns = @JoinColumn(name = "repair_categories_id"))
     List<Category> myCategories;
 
+    @OneToMany(mappedBy = "craftsman")
+    private List<ApplicationForOffer> applications;
 }

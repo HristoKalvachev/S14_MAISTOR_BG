@@ -20,7 +20,6 @@ public class FileController extends ExceptionController {
     @ResponseStatus(code = HttpStatus.OK)
     public void getImage(@PathVariable String pathFile, HttpServletResponse response) {
         File file = new File("images" + File.separator + pathFile);
-
         if (!file.exists()) {
             throw new NotFoundException("File does not exist!");
         }

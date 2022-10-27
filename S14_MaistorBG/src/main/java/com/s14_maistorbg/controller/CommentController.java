@@ -47,7 +47,7 @@ public class CommentController extends ExceptionController{
         return commentService.getCommentWithUsernameDTOById(id);
     }
 
-    @GetMapping("/{id}/comments")
+    @GetMapping("/users/{id}/comments")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public ResponseEntity<List<CommentWithUsernameDTO>> getAllCommentByOwnerId(@PathVariable int id){
         return ResponseEntity.ok(commentService.getAllCommentByOwnerId(id));

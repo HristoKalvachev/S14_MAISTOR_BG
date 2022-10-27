@@ -59,9 +59,8 @@ public class UserService extends AbstractService {
         User user = modelMapper.map(dto, User.class);
         cityRepository.findById(dto.getCityId()).orElseThrow(() -> new NotFoundException("City not found!"));
         user.setPassword(encoder.encode(user.getPassword()));
-        System.out.println(user.getCity());
         userRepository.save(user);
-
+        //Todo Make ROLEID NOT A MAGIC NUMBER
         if (user.getRole().getId() == 2) {
             User craftsmanToAdd = userRepository.findByUsername(user.getUsername())
                     .orElseThrow(() -> new NotFoundException("User is not add!"));
@@ -76,8 +75,15 @@ public class UserService extends AbstractService {
     }
 
     private void validateUserInformation(RegisterDTO dto) {
+        //TODO TRY TO MAKE ONE QUERY
         if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
             throw new BadRequestException("The username exist!");
+        }
+        if (userRepository.findByPhoneNumber(dto.getPhoneNumber()).isPresent()){
+            throw new BadRequestException("The phone number exist!");
+        }
+        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new BadRequestException("This email is already registered!");
         }
         if (!dto.getPassword().equals(dto.getConfirmPassword())) {
             throw new BadRequestException("Passwords mismatch!");
@@ -85,17 +91,11 @@ public class UserService extends AbstractService {
         if (!UserUtility.isEmailValid(dto.getEmail())) {
             throw new BadRequestException("Invalid email!");
         }
-        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new BadRequestException("This email is already registered!");
-        }
         if (!UserUtility.isPassValid(dto.getPassword())) {
             throw new BadRequestException("Invalid password!");
         }
         if (!UserUtility.isPhoneValid(dto.getPhoneNumber())) {
             throw new BadRequestException("Invalid phone number!");
-        }
-        if (userRepository.findByPhoneNumber(dto.getPhoneNumber()).isPresent()){
-            throw new BadRequestException("The phone number exist!");
         }
     }
 
@@ -107,6 +107,7 @@ public class UserService extends AbstractService {
             throw new BadRequestException("Invalid phone number!");
         }
         Optional<User> editedUser = userRepository.findById(id);
+        //TODO SET WITH MODEL MAPPER
         EditUserDTO dto = modelMapper.map(editedUser, EditUserDTO.class);
         dto.setUsername(newUser.getUsername());
         dto.setFirstName(newUser.getFirstName());
@@ -149,6 +150,7 @@ public class UserService extends AbstractService {
     }
 
     public String uploadProfilePhoto(int id, MultipartFile file) {
+        //TODO
         try {
             User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
             String ext = UserUtility.getFileExtension(file);
