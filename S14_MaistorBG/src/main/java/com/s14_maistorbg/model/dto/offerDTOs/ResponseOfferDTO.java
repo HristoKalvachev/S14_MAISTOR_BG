@@ -16,7 +16,7 @@ import java.util.List;
 public class ResponseOfferDTO {
 
     private String offerTitle;
-    private String jobDecscription;
+    private String jobDescription;
     private double budget;
     private int cityId;
     private int repairCategoryId;

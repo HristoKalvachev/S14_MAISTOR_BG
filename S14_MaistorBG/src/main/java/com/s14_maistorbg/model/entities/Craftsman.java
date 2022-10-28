@@ -22,15 +22,14 @@ public class Craftsman {
     @Id
     @Column
     private int userId;
+    @Column
+    private String description;
     @ManyToOne
     @JoinColumn(name = "repair_category_id")
-
     private Category category;
     @OneToMany(mappedBy = "craftsman")
-
     private List<Comment> myAccountComments;
     @OneToMany(mappedBy = "craftsman")
-
     private List<Rate> myRatesReceived;
     @OneToMany(mappedBy = "craftsman")
     private List<PhotoCraftsman> myPhotos;

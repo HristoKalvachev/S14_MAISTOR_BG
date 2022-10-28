@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class OfferWithOutPhotos {
     private String offerTittle;
-    private String jobDecscription;
+    private String jobDescription;
     private double budget;
     private int cityId;
     private int repairCategoryId;

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 
 @Service
-public class OfferService {
+public class OfferService extends AbstractService{
 
     @Autowired
     private OfferRepository offerRepository;
@@ -30,7 +30,7 @@ public class OfferService {
     private UserRepository userRepository;
 
     public ResponseOfferDTO postOffer(ResponseOfferDTO offerDTO, int ownerId) {
-        User user = userRepository.findById(ownerId).orElseThrow(()-> new NotFoundException("User not found!"));
+        User user = getUserById(ownerId);
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         Offer offer = modelMapper.map(offerDTO, Offer.class);
 //        if(user.getRole().getId() == ExceptionController.CRAFTSMAN_ROLE_ID){
@@ -40,7 +40,7 @@ public class OfferService {
         if (offer.getOfferTitle().trim().length() < 10) {
             throw new BadRequestException("Write a more describing title!");
         }
-        if (offer.getJobDecscription().trim().length() < 10) {
+        if (offer.getJobDescription().trim().length() < 10) {
             throw new BadRequestException("Write a better description!");
         }
         if (offer.getBudget() < 0) {
@@ -66,7 +66,7 @@ public class OfferService {
         Offer updatedOffer = offerRepository.findById(id)
                 .map(o -> {
                     o.setOfferTitle(editOfferDTO.getOfferTitle());
-                    o.setJobDecscription(editOfferDTO.getJobDecscription());
+                    o.setJobDescription(editOfferDTO.getJobDecscription());
                     o.setBudget(editOfferDTO.getBudget());
                     return offerRepository.save(o);
                 }).orElseThrow(() -> new NotFoundException("No such user found!"));

@@ -133,7 +133,7 @@ public class UserService extends AbstractService {
     }
 
     public String changePassword(ChangePasswordDTO dto, int id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("No user found!"));
+        User user = getUserById(id);
         if (!dto.getPassword().equals(user.getPassword())) {
             throw new BadRequestException("Incorrect password!");
         }
@@ -152,7 +152,7 @@ public class UserService extends AbstractService {
     public String uploadProfilePhoto(int id, MultipartFile file) {
         //TODO
         try {
-            User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
+            User user = getUserById(id);
             String ext = UserUtility.getFileExtension(file);
             String name = "images" + File.separator + System.nanoTime() + ext;
             File f = new File(name);

@@ -20,7 +20,7 @@ public class Offer {
     @Column
     private String offerTitle;
     @Column
-    private String jobDecscription;
+    private String jobDescription;
     @Column
     private double budget;
     @ManyToOne
