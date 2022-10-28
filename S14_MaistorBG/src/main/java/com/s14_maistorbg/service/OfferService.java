@@ -10,24 +10,14 @@ import com.s14_maistorbg.model.entities.Offer;
 import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
 import com.s14_maistorbg.model.exceptions.NotFoundException;
-import com.s14_maistorbg.model.repositories.OfferRepository;
-import com.s14_maistorbg.model.repositories.UserRepository;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
 
 
 @Service
-public class OfferService {
+public class OfferService extends AbstractService{
 
-    @Autowired
-    private OfferRepository offerRepository;
-    @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
-    private UserRepository userRepository;
 
     public ResponseOfferDTO postOffer(ResponseOfferDTO offerDTO, int ownerId) {
         User user = userRepository.findById(ownerId).orElseThrow(()-> new NotFoundException("User not found!"));
@@ -36,7 +26,14 @@ public class OfferService {
 //        if(user.getRole().getId() == ExceptionController.CRAFTSMAN_ROLE_ID){
 //            throw new BadRequestException("");
 //        }
-        //Todo
+        validateOffer(offer);
+        offer.setOwner(user);
+        offerRepository.save(offer);
+        return modelMapper.map(offer, ResponseOfferDTO.class);
+
+    }
+
+    private void validateOffer(Offer offer) {
         if (offer.getOfferTitle().trim().length() < 10) {
             throw new BadRequestException("Write a more describing title!");
         }
@@ -46,10 +43,6 @@ public class OfferService {
         if (offer.getBudget() < 0) {
             throw new BadRequestException("Budget must be positive!");
         }
-        offer.setOwner(user);
-        offerRepository.save(offer);
-        return modelMapper.map(offer, ResponseOfferDTO.class);
-
     }
 
     public ResponseOfferDTO findById(int id) {

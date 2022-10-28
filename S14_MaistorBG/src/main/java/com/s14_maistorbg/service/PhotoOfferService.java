@@ -25,18 +25,19 @@ public class PhotoOfferService extends AbstractService {
             if (offer.getOfferPhotos().size() >= 5) {
                 throw new UnauthorizedException("You can add maximum 5 pictures!");
             }
-            String ext = UserUtility.getFileExtension(file);
-            String name = "images" + File.separator + System.nanoTime() + ext;
-            File f = new File(name);
-            if (!f.exists()) {
-                Files.copy(file.getInputStream(), f.toPath());
-            } else {
-                throw new BadRequestException("This file already exists!");
-            }
+            String name = createFileAndReturnName(file);
+//            String ext = UserUtility.getFileExtension(file);
+//            String name = "images" + File.separator + System.nanoTime() + ext;
+//            File f = new File(name);
+//            if (!f.exists()) {
+//                Files.copy(file.getInputStream(), f.toPath());
+//            } else {
+//                throw new BadRequestException("This file already exists!");
+//            }
+
             PhotoOffer photoOffer = new PhotoOffer();
             photoOffer.setOffer(offer);
-            photoOffer.setURl(f.getName());
-            //offer.getOfferPhotos().add(photoOffer);
+            photoOffer.setURl(name);
             photoOfferRepository.save(photoOffer);
             offerRepository.save(offer);
             return name;
