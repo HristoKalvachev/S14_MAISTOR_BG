@@ -148,7 +148,7 @@ public class UserService extends AbstractService {
 
     public String uploadProfilePhoto(int id, MultipartFile file) {
         try {
-            User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
+            User user = getUserById(id);
             String name = createFileAndReturnName(file);
 
             if(user.getProfilePicUrl() != null){

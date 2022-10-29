@@ -38,6 +38,8 @@ public abstract class AbstractService {
     protected OfferRepository offerRepository;
     @Autowired
     protected ApplicationForOfferRepository applicationForOfferRepository;
+    @Autowired
+    protected PhotoCraftsmanRepository photoCraftsmanRepository;
 
     protected User getUserById(int id){
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
@@ -48,8 +50,9 @@ public abstract class AbstractService {
 
     public String createFileAndReturnName(MultipartFile file) throws IOException {
         String ext = UserUtility.getFileExtension(file);
-        String name = "images" + File.separator + System.nanoTime() + ext;
-        File f = new File(name);
+        String absolutePath = "images" + File.separator + System.nanoTime() + ext;
+        String name = absolutePath.replace("images"+File.separator,"");
+        File f = new File(absolutePath);
         if(!f.exists()) {
             Files.copy(file.getInputStream(), f.toPath());
         }

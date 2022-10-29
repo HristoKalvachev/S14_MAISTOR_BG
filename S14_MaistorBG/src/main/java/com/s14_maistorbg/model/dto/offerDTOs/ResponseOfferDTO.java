@@ -28,5 +28,5 @@ public class ResponseOfferDTO {
     private LocalDate createdAt;
     private LocalDate durationData;
     private UserWithoutPostsDTO owner;
-    private List<PhotoOfferWithoutOfferDTO> photoOffers;
+    private List<PhotoOfferWithoutOfferDTO> offerPhotos;
 }
