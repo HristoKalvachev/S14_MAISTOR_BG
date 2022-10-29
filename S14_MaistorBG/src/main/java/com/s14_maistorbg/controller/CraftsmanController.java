@@ -3,6 +3,7 @@ package com.s14_maistorbg.controller;
 import com.s14_maistorbg.model.dto.categoryDTOs.CategoryTypeDTO;
 import com.s14_maistorbg.model.dto.craftsmanDTOs.CraftsmanDTO;
 import com.s14_maistorbg.model.dto.craftsmanDTOs.CraftsmanDescriptionDTO;
+import com.s14_maistorbg.model.dto.craftsmanDTOs.CraftsmanProfileDTO;
 import com.s14_maistorbg.model.entities.Craftsman;
 import com.s14_maistorbg.service.CraftsmanService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,12 @@ public class CraftsmanController extends ExceptionController{
     @ResponseStatus(code = HttpStatus.OK)
     public CraftsmanDTO  writeDescription(@RequestBody CraftsmanDescriptionDTO dto,@PathVariable int id){
         return craftsmanService.writeDescription(dto,id);
+    }
+
+    @GetMapping("craftsman/{id}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public CraftsmanProfileDTO showProfile(@PathVariable int id){
+       return craftsmanService.showProfile(id);
     }
 
 

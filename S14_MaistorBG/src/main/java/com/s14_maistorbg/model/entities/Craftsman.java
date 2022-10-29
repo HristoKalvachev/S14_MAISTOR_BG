@@ -30,7 +30,7 @@ public class Craftsman {
     @OneToMany(mappedBy = "craftsman")
     private List<Comment> myAccountComments;
     @OneToMany(mappedBy = "craftsman")
-    private List<Rate> myRatesReceived;
+    private List<Rate> ratesReceived;
     @OneToMany(mappedBy = "craftsman")
     private List<PhotoCraftsman> myPhotos;
 
