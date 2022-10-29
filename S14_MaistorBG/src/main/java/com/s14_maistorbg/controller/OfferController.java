@@ -1,7 +1,7 @@
 package com.s14_maistorbg.controller;
 
 import com.s14_maistorbg.model.dto.offerDTOs.EditOfferDTO;
-import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
+import com.s14_maistorbg.model.dto.offerDTOs.OfferWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.offerDTOs.ResponseOfferDTO;
 import com.s14_maistorbg.service.OfferService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class OfferController extends ExceptionController {
 
     @PutMapping("/offers/{id}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public PostWithoutOwnerDTO editOffer(@RequestBody EditOfferDTO editOfferDTO, @PathVariable int id, HttpServletRequest request) {
+    public OfferWithoutOwnerDTO editOffer(@RequestBody EditOfferDTO editOfferDTO, @PathVariable int id, HttpServletRequest request) {
         int loggedUserId = getLoggedUserId(request);
         return offerService.editOffer(id, editOfferDTO);
     }
@@ -46,8 +46,14 @@ public class OfferController extends ExceptionController {
 
     @GetMapping("/offers/{cid}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public List<ResponseOfferDTO> getAllOffersDoneByCraftsman(@PathVariable int cid){
+    public List<ResponseOfferDTO> getAllOffersDoneByCraftsman(@PathVariable int cid) {
         return offerService.getAllOffersDoneByCraftsman(cid);
+    }
+
+    @GetMapping("/offers/all")
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<ResponseOfferDTO> getAll(){
+        return offerService.getAll();
     }
 
 }

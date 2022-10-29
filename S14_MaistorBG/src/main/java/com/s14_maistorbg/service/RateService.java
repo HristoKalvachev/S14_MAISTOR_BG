@@ -17,17 +17,32 @@ import java.util.Optional;
 @Service
 public class RateService extends AbstractService {
 
-    //Todo ASK KRASI HOW TO REFACTOR FINDBYID METHODS
+    private final int minRate =1;
+    private final int maxRate =10;
+
     public RateResponseDTO rateCraftsman(int craftsmanId, RateCraftsManDTO dto) {
         Craftsman craftsMan = craftsManRepository.findById(craftsmanId)
                 .orElseThrow(() -> new NotFoundException("Craftsman to be rated not found!"));
-        User craftsManToReturn = userRepository.findById(craftsmanId)
+        User craftsmanAsUser = userRepository.findById(craftsmanId)
                 .orElseThrow(() -> new NotFoundException("Craftsman to be rated not found!"));
         User rater = getUserById(dto.getId());
 
-        int craftsmanRoleID = 2;
+
         Optional<Rate> checkForAlreadyGivenRate = rateRepository.findByRaterAndCraftsman(rater, craftsMan);
-        //Todo extract validations
+        int craftsmanRoleID = 2;
+        rateValidation(dto, craftsMan, rater, craftsmanRoleID, checkForAlreadyGivenRate);
+
+        Rate rate = new Rate();
+        rate.setCraftsman(craftsMan);
+        rate.setRater(rater);
+        rate.setRating(dto.getRating());
+        rateRepository.save(rate);
+        RateResponseDTO responseDTO = modelMapper.map(rate, RateResponseDTO.class);
+        responseDTO.setCraftsman(modelMapper.map(craftsmanAsUser, UserWithoutPassDTO.class));
+        return responseDTO;
+    }
+
+    private void rateValidation(RateCraftsManDTO dto, Craftsman craftsMan, User rater, int craftsmanRoleID, Optional<Rate> checkForAlreadyGivenRate) {
         if (checkForAlreadyGivenRate.isPresent()) {
             throw new UnauthorizedException("You have already rated this user!");
         }
@@ -37,23 +52,14 @@ public class RateService extends AbstractService {
         if (rater.getRole().getId() == craftsmanRoleID) {
             throw new UnauthorizedException("Craftsmen can`t rate other craftsmen!");
         }
-        if (dto.getRating() < 1 || dto.getRating() > 10) {
+        if (dto.getRating() < minRate || dto.getRating() > maxRate) {
             throw new BadRequestException("Rate must be between 1 and 10!");
         }
-
-        Rate rate = new Rate();
-        rate.setCraftsman(craftsMan);
-        rate.setRater(rater);
-        rate.setRating(dto.getRating());
-        rateRepository.save(rate);
-        RateResponseDTO responseDTO = modelMapper.map(rate, RateResponseDTO.class);
-        responseDTO.setCraftsman(modelMapper.map(craftsManToReturn, UserWithoutPassDTO.class));
-        return responseDTO;
     }
 
     public RateResponseDTO editRate(int rateId, RateCraftsManDTO dto) {
         Rate rate = rateRepository.findById(rateId).orElseThrow(() -> new NotFoundException("You first need to rate"));
-        User rater = getUserById(dto.getId())
+        User rater = getUserById(dto.getId());
         if (rate.getRater().getId() != rater.getId()) {
             throw new UnauthorizedException("Can`t edit other users rates!");
         }

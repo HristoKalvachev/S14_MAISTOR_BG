@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,9 +38,9 @@ public class Offer {
     @Column
     private boolean isClosed;
     @Column
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
     @Column
-    private LocalDateTime durationData;
+    private LocalDate durationData;
     @OneToMany(mappedBy = "offer")
     private List<PhotoOffer> offerPhotos;
     @OneToMany(mappedBy = "appliedOffer")

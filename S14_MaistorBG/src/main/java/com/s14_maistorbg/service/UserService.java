@@ -1,9 +1,7 @@
 package com.s14_maistorbg.service;
 
 
-import com.s14_maistorbg.model.dto.craftsmanDTOs.CraftsmanDTO;
-import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
-import com.s14_maistorbg.model.dto.rateDTOs.RateCraftsManDTO;
+import com.s14_maistorbg.model.dto.offerDTOs.OfferWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.userDTOs.*;
 import com.s14_maistorbg.model.entities.Category;
 import com.s14_maistorbg.model.entities.Craftsman;
@@ -18,12 +16,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService extends AbstractService {
+    private final int craftsmanRoleId=2;
 
     public UserWithoutPassDTO login(LoginDTO dto) {
         String username = dto.getUsername();
@@ -61,7 +59,7 @@ public class UserService extends AbstractService {
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
         //Todo Make ROLEID NOT A MAGIC NUMBER
-        if (user.getRole().getId() == 2) {
+        if (user.getRole().getId() == craftsmanRoleId) {
             User craftsmanToAdd = userRepository.findByUsername(user.getUsername())
                     .orElseThrow(() -> new NotFoundException("User is not add!"));
 
@@ -107,7 +105,6 @@ public class UserService extends AbstractService {
             throw new BadRequestException("Invalid phone number!");
         }
         Optional<User> editedUser = userRepository.findById(id);
-        //TODO SET WITH MODEL MAPPER
         EditUserDTO dto = modelMapper.map(editedUser, EditUserDTO.class);
         dto.setUsername(newUser.getUsername());
         dto.setFirstName(newUser.getFirstName());
@@ -128,7 +125,7 @@ public class UserService extends AbstractService {
     public UserWithoutPassDTO getById(int userId) {
         User user = getUserById(userId);
         UserWithoutPassDTO dto = modelMapper.map(user, UserWithoutPassDTO.class);
-        dto.setPosts(user.getMyOffers().stream().map(p -> modelMapper.map(p, PostWithoutOwnerDTO.class)).collect(Collectors.toList()));
+        dto.setPosts(user.getMyOffers().stream().map(p -> modelMapper.map(p, OfferWithoutOwnerDTO.class)).collect(Collectors.toList()));
         return dto;
     }
 
@@ -150,18 +147,10 @@ public class UserService extends AbstractService {
     }
 
     public String uploadProfilePhoto(int id, MultipartFile file) {
-        //TODO
         try {
             User user = getUserById(id);
-            String ext = UserUtility.getFileExtension(file);
-            String name = "images" + File.separator + System.nanoTime() + ext;
-            File f = new File(name);
-            if(!f.exists()) {
-                Files.copy(file.getInputStream(), f.toPath());
-            }
-            else{
-                throw new BadRequestException("This file already exists!");
-            }
+            String name = createFileAndReturnName(file);
+
             if(user.getProfilePicUrl() != null){
                 File oldProfilePic = new File(user.getProfilePicUrl());
                 oldProfilePic.delete();
@@ -174,5 +163,7 @@ public class UserService extends AbstractService {
             throw new BadRequestException(e.getMessage(), e);
         }
     }
+
+
 
 }

@@ -19,9 +19,6 @@ import java.util.Set;
 @ToString
 public class CraftsmanDTO {
     private int id;
-    private String username;
-    private String firstName;
-    private String lastName;
     private String description;
     List<CategoryTypeDTO> myCategories = new ArrayList<>();
 }

@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PostWithoutOwnerDTO {
+public class OfferWithoutOwnerDTO {
 
     private int id;
     private String offerTitle;
@@ -16,4 +16,5 @@ public class PostWithoutOwnerDTO {
     private double budget;
     private int cityId;
     private int repairCategoryId;
+
 }
