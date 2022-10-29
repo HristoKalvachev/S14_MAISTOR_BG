@@ -26,9 +26,6 @@ public class ApplicationForOffer {
     @ManyToOne
     @JoinColumn(name = "offer_id")
     private Offer appliedOffer;
-    @OneToOne
-    @JoinColumn(name = "id")
-    private Offer selectedOffer;
     @ManyToOne
     @JoinColumn(name = "craftsman_id")
     private Craftsman craftsman;

@@ -9,6 +9,7 @@ import java.util.Optional;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
     Optional<Category> findById(int id);
+    //TODO index on category type
     boolean existsCategoryByType(String categoryName);
     @Override
     List<Category> findAll();

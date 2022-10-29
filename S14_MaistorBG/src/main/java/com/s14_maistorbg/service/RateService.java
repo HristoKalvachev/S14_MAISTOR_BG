@@ -23,8 +23,7 @@ public class RateService extends AbstractService {
                 .orElseThrow(() -> new NotFoundException("Craftsman to be rated not found!"));
         User craftsManToReturn = userRepository.findById(craftsmanId)
                 .orElseThrow(() -> new NotFoundException("Craftsman to be rated not found!"));
-        User rater = userRepository.findByUsername(dto.getUsername())
-                .orElseThrow(() -> new NotFoundException("User to rate not found!"));
+        User rater = getUserById(dto.getId());
 
         int craftsmanRoleID = 2;
         Optional<Rate> checkForAlreadyGivenRate = rateRepository.findByRaterAndCraftsman(rater, craftsMan);
@@ -54,8 +53,7 @@ public class RateService extends AbstractService {
 
     public RateResponseDTO editRate(int rateId, RateCraftsManDTO dto) {
         Rate rate = rateRepository.findById(rateId).orElseThrow(() -> new NotFoundException("You first need to rate"));
-        User rater = userRepository.findByUsername(dto.getUsername())
-                .orElseThrow(() -> new NotFoundException("User not found!"));
+        User rater = getUserById(dto.getId())
         if (rate.getRater().getId() != rater.getId()) {
             throw new UnauthorizedException("Can`t edit other users rates!");
         }
@@ -69,8 +67,7 @@ public class RateService extends AbstractService {
 
     public String unRate(int rateId, RateDeleteDTO dto) {
         Rate rate = rateRepository.findById(rateId).orElseThrow(() -> new NotFoundException("You first need to rate"));
-        User rater = userRepository.findByUsername(dto.getUsername())
-                .orElseThrow(() -> new NotFoundException("User not found!"));
+        User rater = getUserById(dto.getId());
         if (rate.getRater().getId() != rater.getId()) {
             throw new UnauthorizedException("You can`t remove rate!");
         }

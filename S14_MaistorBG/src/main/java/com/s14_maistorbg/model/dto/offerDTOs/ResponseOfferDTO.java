@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -20,6 +21,8 @@ public class ResponseOfferDTO {
     private double budget;
     private int cityId;
     private int repairCategoryId;
+    private LocalDateTime durationData;
     private UserWithoutPostsDTO owner;
     private List<PhotoOfferWithoutOfferDTO> photoOffers;
+
 }

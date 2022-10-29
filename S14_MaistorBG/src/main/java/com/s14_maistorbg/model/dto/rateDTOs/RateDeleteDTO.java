@@ -9,5 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class RateDeleteDTO {
+    private int id;
     private String username;
 }

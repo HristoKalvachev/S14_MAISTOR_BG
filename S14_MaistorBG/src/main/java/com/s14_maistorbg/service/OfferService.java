@@ -6,6 +6,7 @@ import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.offerDTOs.ResponseOfferDTO;
 import com.s14_maistorbg.model.dto.photos.offerPhotos.PhotoOfferWithoutOfferDTO;
 import com.s14_maistorbg.model.dto.userDTOs.UserWithoutPostsDTO;
+import com.s14_maistorbg.model.entities.Craftsman;
 import com.s14_maistorbg.model.entities.Offer;
 import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
@@ -16,6 +17,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -66,7 +69,7 @@ public class OfferService extends AbstractService{
         Offer updatedOffer = offerRepository.findById(id)
                 .map(o -> {
                     o.setOfferTitle(editOfferDTO.getOfferTitle());
-                    o.setJobDescription(editOfferDTO.getJobDecscription());
+                    o.setJobDescription(editOfferDTO.getJobDescription());
                     o.setBudget(editOfferDTO.getBudget());
                     return offerRepository.save(o);
                 }).orElseThrow(() -> new NotFoundException("No such user found!"));
@@ -78,5 +81,15 @@ public class OfferService extends AbstractService{
         offerRepository.delete(wantedOffer);
         ResponseOfferDTO offerDTO = modelMapper.map(wantedOffer, ResponseOfferDTO.class);
         return offerDTO;
+    }
+
+    public List<ResponseOfferDTO> getAllOffersDoneByCraftsman(int craftsmanId){
+        Craftsman craftsman = getCraftsmanById(craftsmanId);
+        List<Offer> offersByCraftsman = offerRepository.findBySelectedCraftsmanId(craftsman);
+        List<ResponseOfferDTO> offerDTOS = new ArrayList<>();
+        for (int i = 0; i < offersByCraftsman.size(); i++) {
+            offerDTOS.add(modelMapper.map(offersByCraftsman.get(i), ResponseOfferDTO.class));
+        }
+        return offerDTOS;
     }
 }

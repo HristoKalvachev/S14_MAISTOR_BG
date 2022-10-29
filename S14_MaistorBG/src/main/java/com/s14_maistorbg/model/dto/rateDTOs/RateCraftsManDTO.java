@@ -10,6 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RateCraftsManDTO {
 
+
+    private int id;
     private String username;
     private int rating;
 }

@@ -41,6 +41,17 @@ public class CommentController extends ExceptionController{
         return commentService.editComment(commentToEdit, id);
     }
 
+    @DeleteMapping("/comments/{id}")
+    @ResponseStatus(code = HttpStatus.ACCEPTED)
+    public ResponseCommentDTO deleteComment(HttpServletRequest request, @PathVariable int id) {
+        int ownerId = getLoggedUserId(request);
+        Comment comment = commentService.getCommentById(id);
+        if (ownerId != comment.getCommentOwner().getId()){
+            throw new ForbiddenException("You can not delete the comment, because your not owner!");
+        }
+        return commentService.deleteComment(id);
+    }
+
     @GetMapping("/comments/{id}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public CommentWithUsernameDTO getCommentById(@PathVariable int id){

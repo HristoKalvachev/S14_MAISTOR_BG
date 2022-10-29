@@ -1,6 +1,7 @@
 package com.s14_maistorbg.service;
 
 import com.s14_maistorbg.model.entities.Craftsman;
+import com.s14_maistorbg.model.entities.Offer;
 import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.NotFoundException;
 import com.s14_maistorbg.model.repositories.*;
@@ -37,6 +38,11 @@ public abstract class AbstractService {
     }
     protected Craftsman getCraftsmanById(int id){
         return craftsManRepository.findById(id).orElseThrow(()-> new NotFoundException("Craftsman not found!"));
+    }
+
+    protected Offer findOfferById(int offerId){
+        return offerRepository.findById(offerId)
+                .orElseThrow(()-> new NotFoundException("Offer does not exist"));
     }
 
 }

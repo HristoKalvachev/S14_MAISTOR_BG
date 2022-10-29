@@ -45,6 +45,13 @@ public class CommentService extends AbstractService{
         return modelMapper.map(comment, ResponseCommentDTO.class);
     }
 
+    public ResponseCommentDTO deleteComment(int commentId) {
+        Comment comment = getCommentById(commentId);
+        commentRepository.delete(comment);
+        System.out.println("The comment is successful deleted.");
+        return modelMapper.map(comment, ResponseCommentDTO.class);
+    }
+
     public Comment getCommentById(int id){
         return commentRepository.findById(id)
                 .orElseThrow(()-> new NotFoundException("Comment not found!"));

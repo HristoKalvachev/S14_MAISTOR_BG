@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 public class OfferController extends ExceptionController {
@@ -36,11 +37,17 @@ public class OfferController extends ExceptionController {
         return offerService.editOffer(id, editOfferDTO);
     }
 
-    @DeleteMapping("offers/{id}")
+    @DeleteMapping("/offers/{id}")
     @ResponseStatus(code = HttpStatus.OK)
     public ResponseOfferDTO deleteOffer(@PathVariable int id, HttpServletRequest request) {
         int loggedUserId = getLoggedUserId(request);
         return offerService.deleteOffer(id);
+    }
+
+    @GetMapping("/offers/{cid}")
+    @ResponseStatus(code = HttpStatus.ACCEPTED)
+    public List<ResponseOfferDTO> getAllOffersDoneByCraftsman(@PathVariable int cid){
+        return offerService.getAllOffersDoneByCraftsman(cid);
     }
 
 }

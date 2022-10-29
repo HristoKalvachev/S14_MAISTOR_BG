@@ -4,6 +4,8 @@ package com.s14_maistorbg.controller;
 import com.s14_maistorbg.model.dto.ApplicationForOfferDTO;
 import com.s14_maistorbg.model.dto.categoryDTOs.CategoryDTO;
 import com.s14_maistorbg.model.dto.categoryDTOs.CategoryTypeDTO;
+import com.s14_maistorbg.model.dto.craftsmanDTOs.CraftsmanApplicantDTO;
+import com.s14_maistorbg.model.dto.offerDTOs.ResponseOfferDTO;
 import com.s14_maistorbg.service.ApplicationForOfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,10 +28,17 @@ public class ApplicationForOfferController extends ExceptionController{
         return applicationForOfferService.offerApplication(applicationForOfferDTO, craftsmanId);
     }
 
-//    @GetMapping("/applications")
-//    @ResponseStatus(code = HttpStatus.ACCEPTED)
-//    public List<ApplicationForOfferDTO> getAllOfferApplicants(){
-//
-//    }
+    @GetMapping("/applications/{oid}")
+    @ResponseStatus(code = HttpStatus.ACCEPTED)
+    public List<CraftsmanApplicantDTO> getAllOfferApplicants(@PathVariable int oid, HttpServletRequest request){
+        int offerOwnerId = getLoggedUserId(request);
+        return applicationForOfferService.getAllOfferApplicants(oid, offerOwnerId);
+    }
 
+    @PutMapping("/applications/{oid}/applicant/{cid}")
+    @ResponseStatus(code = HttpStatus.ACCEPTED)
+    public CraftsmanApplicantDTO selectCraftsmanForOffer(@PathVariable int oid, @PathVariable int cid, HttpServletRequest request){
+        int offerOwnerId = getLoggedUserId(request);
+        return applicationForOfferService.selectCraftsmanForOffer(oid, cid, offerOwnerId);
+    }
 }
