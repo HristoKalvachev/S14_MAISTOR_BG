@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -20,7 +22,7 @@ public class Offer {
     @Column
     private String offerTitle;
     @Column
-    private String jobDecscription;
+    private String jobDescription;
     @Column
     private double budget;
     @ManyToOne
@@ -32,6 +34,12 @@ public class Offer {
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
+    @Column
+    private boolean isClosed;
+    @Column
+    private LocalDate createdAt;
+    @Column
+    private LocalDate durationData;
     @OneToMany(mappedBy = "offer")
     private List<PhotoOffer> offerPhotos;
     @OneToMany(mappedBy = "appliedOffer")

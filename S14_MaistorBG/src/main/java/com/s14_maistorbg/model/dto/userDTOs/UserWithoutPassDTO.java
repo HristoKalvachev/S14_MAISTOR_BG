@@ -1,6 +1,6 @@
 package com.s14_maistorbg.model.dto.userDTOs;
 
-import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
+import com.s14_maistorbg.model.dto.offerDTOs.OfferWithoutOwnerDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,5 +17,5 @@ public class UserWithoutPassDTO {
     private String firstName;
     private String lastName;
     private int roleId;
-    private List<PostWithoutOwnerDTO> posts;
+    private List<OfferWithoutOwnerDTO> posts;
 }

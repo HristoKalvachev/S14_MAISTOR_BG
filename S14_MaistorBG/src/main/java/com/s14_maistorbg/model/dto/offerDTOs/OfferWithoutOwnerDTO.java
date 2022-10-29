@@ -8,12 +8,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PostWithoutOwnerDTO {
+public class OfferWithoutOwnerDTO {
 
     private int id;
     private String offerTitle;
-    private String jobDecscription;
+    private String jobDescription;
     private double budget;
     private int cityId;
     private int repairCategoryId;
+
 }

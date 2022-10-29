@@ -21,56 +21,42 @@ public class CommentService extends AbstractService{
 
     public ResponseCommentDTO addComment(AddCommentDTO commentDTO, int userId){
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
-        User user = userRepository.findById(userId).orElseThrow(()-> new NotFoundException("User not found!"));
-        Craftsman craftsman = craftsManRepository.findById(commentDTO.getCraftsmanId()).orElseThrow(()-> new NotFoundException("User not found!"));
-        //Todo Extract comment check
-        if (commentDTO.getComment() == null ||
-            commentDTO.getComment().isBlank() ||
-            commentDTO.getComment().isEmpty()){
-            throw new BadRequestException("There is no text in the comment body!");
-        }
-
-        if (commentDTO.getComment().length() < 10){
-            throw new BadRequestException("Write a more describing comment!");
-        }
-        Comment comment = new Comment();
-        //Todo use model mapper
-        comment.setComment(commentDTO.getComment());
-        comment.setCommentAt(LocalDate.now());
+        User user = getUserById(userId);
+        Craftsman craftsman = craftsManRepository.findById(commentDTO.getCraftsmanId())
+                .orElseThrow(()-> new NotFoundException("User not found!"));
+        validateCommentText(commentDTO.getComment());
+        Comment comment = modelMapper.map(commentDTO, Comment.class);
         comment.setCommentOwner(user);
         comment.setCraftsman(craftsman);
         if (commentDTO.getParentCommentId() != null){
-            comment.setParentComment(commentRepository.findById(commentDTO.getParentCommentId().get()).
-            orElseThrow(()-> new BadRequestException("Invalid parent comment!")));
+            comment.setParentComment(commentRepository.findById(commentDTO.getParentCommentId().get())
+                    .orElseThrow(()-> new BadRequestException("Invalid parent comment!")));
         }
         commentRepository.save(comment);
         ResponseCommentDTO responseCommentDTO = modelMapper.map(comment, ResponseCommentDTO.class);
         return responseCommentDTO;
     }
 
-    public ResponseCommentDTO editComment(EditCommentDTO editCommentDTO, int id, int commentId) {
+    public ResponseCommentDTO editComment(EditCommentDTO editCommentDTO, int commentId) {
         Comment comment = getCommentById(commentId);
-        if (editCommentDTO.getComment() == null ||
-                editCommentDTO.getComment().isBlank() ||
-                editCommentDTO.getComment().isEmpty()){
-            throw new BadRequestException("There is no text in the comment body!");
-        }
+        validateCommentText(editCommentDTO.getComment());
         comment.setComment(editCommentDTO.getComment());
         commentRepository.save(comment);
         return modelMapper.map(comment, ResponseCommentDTO.class);
     }
 
     public Comment getCommentById(int id){
-        return commentRepository.findById(id).orElseThrow(()-> new NotFoundException("Comment not found!"));
+        return commentRepository.findById(id)
+                .orElseThrow(()-> new NotFoundException("Comment not found!"));
     }
 
     public CommentWithUsernameDTO getCommentWithUsernameDTOById(int id){
-        Comment comment = commentRepository.findById(id).orElseThrow(()-> new NotFoundException("Comment not found!"));
+        Comment comment = getCommentById(id);
         return modelMapper.map(comment, CommentWithUsernameDTO.class);
     }
 
     public List<CommentWithUsernameDTO> getAllCommentByOwnerId(int ownerId){
-        User user = userRepository.findById(ownerId).orElseThrow(()->new NotFoundException("User not found!"));
+        User user = getUserById(ownerId);
         //Todo check comment owner field
         List<Comment> comments = commentRepository.findAllByCommentOwner(user);
         List<CommentWithUsernameDTO> commentsWithUsername = new ArrayList<>();
@@ -83,4 +69,14 @@ public class CommentService extends AbstractService{
         return commentsWithUsername;
     }
 
+    private void validateCommentText(String comment){
+        if (comment == null ||
+            comment.isBlank() ||
+            comment.isEmpty()){
+            throw new BadRequestException("There is no text in the comment body!");
+        }
+        if (comment.length() < 10){
+            throw new BadRequestException("Write a more describing comment!");
+        }
+    }
 }

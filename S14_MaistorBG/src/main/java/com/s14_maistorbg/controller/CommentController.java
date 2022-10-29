@@ -38,7 +38,7 @@ public class CommentController extends ExceptionController{
         if (ownerId != comment.getCommentOwner().getId()){
             throw new ForbiddenException("You can not edit the comment, because your not owner!");
         }
-        return commentService.editComment(commentToEdit, ownerId, id);
+        return commentService.editComment(commentToEdit, id);
     }
 
     @GetMapping("/comments/{id}")

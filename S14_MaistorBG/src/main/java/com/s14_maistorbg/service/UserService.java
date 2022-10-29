@@ -1,7 +1,7 @@
 package com.s14_maistorbg.service;
 
 
-import com.s14_maistorbg.model.dto.offerDTOs.PostWithoutOwnerDTO;
+import com.s14_maistorbg.model.dto.offerDTOs.OfferWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.userDTOs.*;
 import com.s14_maistorbg.model.entities.Category;
 import com.s14_maistorbg.model.entities.Craftsman;
@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -126,12 +125,12 @@ public class UserService extends AbstractService {
     public UserWithoutPassDTO getById(int userId) {
         User user = getUserById(userId);
         UserWithoutPassDTO dto = modelMapper.map(user, UserWithoutPassDTO.class);
-        dto.setPosts(user.getMyOffers().stream().map(p -> modelMapper.map(p, PostWithoutOwnerDTO.class)).collect(Collectors.toList()));
+        dto.setPosts(user.getMyOffers().stream().map(p -> modelMapper.map(p, OfferWithoutOwnerDTO.class)).collect(Collectors.toList()));
         return dto;
     }
 
     public String changePassword(ChangePasswordDTO dto, int id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("No user found!"));
+        User user = getUserById(id);
         if (!dto.getPassword().equals(user.getPassword())) {
             throw new BadRequestException("Incorrect password!");
         }
@@ -151,6 +150,7 @@ public class UserService extends AbstractService {
         try {
             User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
             String name = createFileAndReturnName(file);
+
             if(user.getProfilePicUrl() != null){
                 File oldProfilePic = new File(user.getProfilePicUrl());
                 oldProfilePic.delete();

@@ -2,6 +2,7 @@ package com.s14_maistorbg.service;
 
 import com.s14_maistorbg.model.dto.categoryDTOs.CategoryTypeDTO;
 import com.s14_maistorbg.model.dto.craftsmanDTOs.CraftsmanDTO;
+import com.s14_maistorbg.model.dto.craftsmanDTOs.CraftsmanDescriptionDTO;
 import com.s14_maistorbg.model.entities.Category;
 import com.s14_maistorbg.model.entities.Craftsman;
 import com.s14_maistorbg.model.entities.User;
@@ -17,9 +18,10 @@ public class CraftsmanService extends AbstractService{
     public CraftsmanDTO craftsmanAddCategory(int id, String categoryName){
         //Todo refactor everything
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
-        User userCraftsman = userRepository.findById(id).orElseThrow(()-> new NotFoundException("Craftsman not found!"));
-        Craftsman craftsman = craftsManRepository.findById(id).orElseThrow(()-> new NotFoundException("Craftsman not found!"));
-        Category category = categoryRepository.findByType(categoryName).orElseThrow(()-> new NotFoundException("Category not found!"));
+        User userCraftsman = getUserById(id);
+        Craftsman craftsman = getCraftsmanById(id);
+        Category category = categoryRepository.findByType(categoryName)
+                .orElseThrow(()-> new NotFoundException("Category not found!"));
         if (craftsman.getMyCategories().contains(category)){
             throw new BadRequestException("Craftsman already have this category!");
         }
@@ -27,11 +29,11 @@ public class CraftsmanService extends AbstractService{
         craftsman = craftsManRepository.save(craftsman);
         category.getMyCraftsmans().add(craftsman);
         categoryRepository.save(category);
-        CraftsmanDTO craftsmanDTO = new CraftsmanDTO();
-        craftsmanDTO.setId(craftsman.getUserId());
-        craftsmanDTO.setFirstName(userCraftsman.getFirstName());
-        craftsmanDTO.setLastName(userCraftsman.getLastName());
-        craftsmanDTO.setUsername(userCraftsman.getUsername());
+        CraftsmanDTO craftsmanDTO = modelMapper.map(userCraftsman, CraftsmanDTO.class);
+//        craftsmanDTO.setId(craftsman.getUserId());
+//        craftsmanDTO.setFirstName(userCraftsman.getFirstName());
+//        craftsmanDTO.setLastName(userCraftsman.getLastName());
+//        craftsmanDTO.setUsername(userCraftsman.getUsername());
         for (int i = 0; i < craftsman.getMyCategories().size(); i++) {
             craftsmanDTO.getMyCategories().add(modelMapper.map(craftsman.getMyCategories().get(i), CategoryTypeDTO.class));
         }
@@ -42,9 +44,10 @@ public class CraftsmanService extends AbstractService{
     public CraftsmanDTO craftsmanDeleteCategory(int id, String categoryName){
         //Todo
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
-        User userCraftsman = userRepository.findById(id).orElseThrow(()-> new NotFoundException("Craftsman not found!"));
-        Craftsman craftsman = craftsManRepository.findById(id).orElseThrow(()-> new NotFoundException("Craftsman not found!"));
-        Category category = categoryRepository.findByType(categoryName).orElseThrow(()-> new NotFoundException("Category not found!"));
+        User userCraftsman = getUserById(id);
+        Craftsman craftsman = getCraftsmanById(id);
+        Category category = categoryRepository.findByType(categoryName)
+                .orElseThrow(()-> new NotFoundException("Category not found!"));
         if (!craftsman.getMyCategories().contains(category)){
             throw new BadRequestException("Craftsman does not have this category!");
         }
@@ -52,15 +55,26 @@ public class CraftsmanService extends AbstractService{
         craftsman = craftsManRepository.save(craftsman);
         category.getMyCraftsmans().remove(craftsman);
         categoryRepository.save(category);
-        CraftsmanDTO craftsmanDTO = new CraftsmanDTO();
-        craftsmanDTO.setId(craftsman.getUserId());
-        craftsmanDTO.setFirstName(userCraftsman.getFirstName());
-        craftsmanDTO.setLastName(userCraftsman.getLastName());
-        craftsmanDTO.setUsername(userCraftsman.getUsername());
+        CraftsmanDTO craftsmanDTO = modelMapper.map(userCraftsman, CraftsmanDTO.class);
+//        craftsmanDTO.setId(craftsman.getUserId());
+//        craftsmanDTO.setFirstName(userCraftsman.getFirstName());
+//        craftsmanDTO.setLastName(userCraftsman.getLastName());
+//        craftsmanDTO.setUsername(userCraftsman.getUsername());
         for (int i = 0; i < craftsman.getMyCategories().size(); i++) {
             craftsmanDTO.getMyCategories().add(modelMapper.map(craftsman.getMyCategories().get(i), CategoryTypeDTO.class));
         }
         return craftsmanDTO;
     }
 
+
+    public CraftsmanDTO writeDescription(CraftsmanDescriptionDTO dto, int id) {
+        Craftsman craftsman = getCraftsmanById(id);
+        int minLength = 10;
+        if(dto.getDescription().length()<minLength){
+            throw new BadRequestException("Write a better description about yourself!");
+        }
+        CraftsmanDTO craftsmanDTO = modelMapper.map(craftsman,CraftsmanDTO.class);
+        craftsManRepository.save(craftsman);
+        return craftsmanDTO;
+    }
 }
