@@ -77,6 +77,7 @@ public abstract class ExceptionController {
         session.setAttribute(LOGGED, true);
         session.setAttribute(USER_ID, id);
         session.setAttribute(REMOTE_IP, request.getRemoteAddr());
+        session.setMaxInactiveInterval(30);
     }
 
     public int getLoggedUserId(HttpServletRequest request){

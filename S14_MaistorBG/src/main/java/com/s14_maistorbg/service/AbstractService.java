@@ -49,12 +49,10 @@ public abstract class AbstractService {
         return craftsManRepository.findById(id).orElseThrow(()-> new NotFoundException("Craftsman not found!"));
     }
 
-
     protected Offer findOfferById(int offerId) {
         return offerRepository.findById(offerId)
                 .orElseThrow(() -> new NotFoundException("Offer does not exist"));
     }
-
 
     public String createFileAndReturnName(MultipartFile file) throws IOException {
         String ext = UserUtility.getFileExtension(file);

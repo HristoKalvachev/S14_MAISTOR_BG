@@ -1,12 +1,23 @@
 package com.s14_maistorbg.utility;
 
+import lombok.Data;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 public abstract class UserUtility {
+
+
+
 
     public static boolean isPassValid(String password) {
         /*
@@ -49,5 +60,7 @@ public abstract class UserUtility {
         }
         return name.substring(lastIndexOf);
     }
+
+
 
 }
