@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService extends AbstractService {
-    private final int craftsmanRoleId=2;
+    private static final int CRAFTSMAN_ROLE_ID = 2;
 
     public UserWithoutPassDTO login(LoginDTO dto) {
         String username = dto.getUsername();
@@ -55,16 +55,17 @@ public class UserService extends AbstractService {
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         validateUserInformation(dto);
         User user = modelMapper.map(dto, User.class);
-        cityRepository.findById(dto.getCityId()).orElseThrow(() -> new NotFoundException("City not found!"));
+        cityRepository.findById(dto.getCityId())
+                .orElseThrow(() -> new NotFoundException("City not found!"));
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
         //Todo Make ROLEID NOT A MAGIC NUMBER
-        if (user.getRole().getId() == craftsmanRoleId) {
+        if (user.getRole().getId() == CRAFTSMAN_ROLE_ID) {
             User craftsmanToAdd = userRepository.findByUsername(user.getUsername())
                     .orElseThrow(() -> new NotFoundException("User is not add!"));
-
             Craftsman craftsman = new Craftsman();
-            Category category1 = categoryRepository.findById(dto.getRepairCategoryId()).orElseThrow(() -> new NotFoundException("Category not found!"));
+            Category category1 = categoryRepository.findById(dto.getRepairCategoryId())
+                    .orElseThrow(() -> new NotFoundException("Category not found!"));
             craftsman.setUserId(craftsmanToAdd.getId());
             craftsman.setCategory(category1);
             craftsManRepository.save(craftsman);
@@ -163,7 +164,4 @@ public class UserService extends AbstractService {
             throw new BadRequestException(e.getMessage(), e);
         }
     }
-
-
-
 }

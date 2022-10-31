@@ -13,4 +13,6 @@ public interface OfferRepository extends JpaRepository<Offer, Integer> {
     @Override
     Optional<Offer> findById(Integer integer);
     List<Offer> findBySelectedCraftsmanId(Craftsman craftsman);
+
+    List<Offer> findByCityId(int cityId);
 }
