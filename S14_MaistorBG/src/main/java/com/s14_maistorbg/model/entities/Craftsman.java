@@ -1,16 +1,13 @@
 package com.s14_maistorbg.model.entities;
 
 
-import lombok.*;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "craftsman")
@@ -34,7 +31,7 @@ public class Craftsman {
     @OneToMany(mappedBy = "craftsman")
     private List<PhotoCraftsman> myPhotos;
     @OneToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "user_id")
     private Offer selectedCraftsman;
     @ManyToMany
     @JoinTable(

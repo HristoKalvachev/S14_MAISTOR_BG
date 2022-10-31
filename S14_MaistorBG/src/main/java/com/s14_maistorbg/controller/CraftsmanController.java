@@ -4,6 +4,7 @@ import com.s14_maistorbg.model.dto.categoryDTOs.CategoryTypeDTO;
 import com.s14_maistorbg.model.dto.craftsmanDTOs.CraftsmanDTO;
 import com.s14_maistorbg.model.dto.craftsmanDTOs.CraftsmanDescriptionDTO;
 import com.s14_maistorbg.model.dto.craftsmanDTOs.CraftsmanProfileDTO;
+import com.s14_maistorbg.model.entities.Category;
 import com.s14_maistorbg.model.entities.Craftsman;
 import com.s14_maistorbg.service.CraftsmanService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 public class CraftsmanController extends ExceptionController{
@@ -38,11 +40,21 @@ public class CraftsmanController extends ExceptionController{
         return craftsmanService.writeDescription(dto,id);
     }
 
-    @GetMapping("craftsman/{id}")
+    @GetMapping("/craftsman/{id}")
     @ResponseStatus(code = HttpStatus.OK)
     public CraftsmanProfileDTO showProfile(@PathVariable int id){
        return craftsmanService.showProfile(id);
     }
 
+    @GetMapping("/craftsman")
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<CraftsmanDTO> getAllCraftsman(){
+        return craftsmanService.getAll();
+    }
+    @GetMapping("/craftsman/category/{id}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<CraftsmanDTO> getAllCraftsmanByCategory(@PathVariable int id){
+        return craftsmanService.getAllByCategory(id);
+    }
 
 }

@@ -7,12 +7,12 @@ import com.s14_maistorbg.model.dto.craftsmanDTOs.CraftsmanDescriptionDTO;
 import com.s14_maistorbg.model.dto.craftsmanDTOs.CraftsmanProfileDTO;
 import com.s14_maistorbg.model.entities.Category;
 import com.s14_maistorbg.model.entities.Craftsman;
-import com.s14_maistorbg.model.entities.PhotoCraftsman;
 import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
 import com.s14_maistorbg.model.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,7 +41,7 @@ public class CraftsmanService extends AbstractService {
 //        craftsmanDTO.setLastName(userCraftsman.getLastName());
 //        craftsmanDTO.setUsername(userCraftsman.getUsername());
         for (int i = 0; i < craftsman.getMyCategories().size(); i++) {
-            craftsmanDTO.getMyCategories().add(modelMapper.map(craftsman.getMyCategories().get(i), CategoryTypeDTO.class));
+            craftsmanDTO.getCategories().add(modelMapper.map(craftsman.getMyCategories().get(i), CategoryTypeDTO.class));
         }
         return craftsmanDTO;
     }
@@ -67,7 +67,7 @@ public class CraftsmanService extends AbstractService {
 //        craftsmanDTO.setLastName(userCraftsman.getLastName());
 //        craftsmanDTO.setUsername(userCraftsman.getUsername());
         for (int i = 0; i < craftsman.getMyCategories().size(); i++) {
-            craftsmanDTO.getMyCategories().add(modelMapper.map(craftsman.getMyCategories().get(i), CategoryTypeDTO.class));
+            craftsmanDTO.getCategories().add(modelMapper.map(craftsman.getMyCategories().get(i), CategoryTypeDTO.class));
         }
         return craftsmanDTO;
     }
@@ -79,6 +79,7 @@ public class CraftsmanService extends AbstractService {
         if (dto.getDescription().length() < minLength) {
             throw new BadRequestException("Write a better description about yourself!");
         }
+        craftsman.setDescription(dto.getDescription());
         CraftsmanDTO craftsmanDTO = modelMapper.map(craftsman, CraftsmanDTO.class);
         craftsManRepository.save(craftsman);
         return craftsmanDTO;
@@ -88,22 +89,35 @@ public class CraftsmanService extends AbstractService {
         Craftsman craftsman = getCraftsmanById(id);
         User user = getUserById(id);
         CraftsmanProfileDTO craftsmanProfileDTO = new CraftsmanProfileDTO();
-       craftsmanProfileDTO = setDto(craftsmanProfileDTO,craftsman,user);
+        craftsmanProfileDTO = setProfileDto(craftsmanProfileDTO, craftsman, user);
 
         return craftsmanProfileDTO;
     }
 
-    private CraftsmanProfileDTO setDto(CraftsmanProfileDTO craftsmanProfileDTO, Craftsman craftsman, User user) {
-        craftsmanProfileDTO = modelMapper.map(user,CraftsmanProfileDTO.class);
+    private CraftsmanProfileDTO setProfileDto(CraftsmanProfileDTO craftsmanProfileDTO, Craftsman craftsman, User user) {
+        craftsmanProfileDTO = modelMapper.map(user, CraftsmanProfileDTO.class);
         craftsmanProfileDTO.setDescription(craftsman.getDescription());
         List<CategoryTypeDTO> categoryTypeDTOS = craftsman.getMyCategories().stream()
-                        .map(e->modelMapper.map(e,CategoryTypeDTO.class)).collect(Collectors.toList());
+                .map(e -> modelMapper.map(e, CategoryTypeDTO.class)).collect(Collectors.toList());
         craftsmanProfileDTO.setCategories(categoryTypeDTOS);
 
         List<CommentWithUsernameDTO> commentWithUsernameDTOS = craftsman.getMyAccountComments().stream()
-                .map(e->modelMapper.map(e,CommentWithUsernameDTO.class)).collect(Collectors.toList());
+                .map(e -> modelMapper.map(e, CommentWithUsernameDTO.class)).collect(Collectors.toList());
         craftsmanProfileDTO.setComments(commentWithUsernameDTOS);
         craftsmanProfileDTO.setPhotos(craftsman.getMyPhotos());
         return craftsmanProfileDTO;
+    }
+
+    public List<CraftsmanDTO> getAll() {
+        List<Craftsman> craftsmen = craftsManRepository.findAll();
+        return craftsmen.stream().map(e -> modelMapper.map(e, CraftsmanDTO.class)).collect(Collectors.toList());
+    }
+
+    public List<CraftsmanDTO> getAllByCategory(int id) {
+        Category category = categoryRepository
+                .findById(id).orElseThrow(() -> new NotFoundException("Category not found!"));
+        List<Craftsman> craftsmen = craftsManRepository.findAllByMyCategoriesContaining(category);
+
+        return craftsmen.stream().map(e->modelMapper.map(e,CraftsmanDTO.class)).collect(Collectors.toList());
     }
 }
