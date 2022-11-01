@@ -15,10 +15,11 @@ import java.io.IOException;
 public class PhotoOfferService extends AbstractService {
 
     public String uploadOfferPhoto(int id, MultipartFile file) {
+        int maxPhotos = 5;
         try {
             Offer offer = offerRepository.findById(id).orElseThrow(() -> new NotFoundException("Offer not found!"));
-            if (offer.getOfferPhotos().size() >= 5) {
-                throw new UnauthorizedException("You can add maximum 5 pictures!");
+            if (offer.getOfferPhotos().size() >= maxPhotos) {
+                throw new UnauthorizedException("You can add maximum " + maxPhotos + " pictures!");
             }
             String name = createFileAndReturnName(file);
 
@@ -34,12 +35,12 @@ public class PhotoOfferService extends AbstractService {
     }
 
     public void deleteOfferPhoto(int oid, int pid) {
-        Offer offer = offerRepository.findById(oid).orElseThrow(() -> new NotFoundException("Offer not found!"));
+        getOfferById(oid);
         PhotoOffer photoOffer = photoOfferRepository.findById(pid).orElseThrow(() -> new NotFoundException("Photo not found!"));
-        File file = new File("images"+File.separator+photoOffer.getURl());
-        if(file.delete()){
-        photoOfferRepository.delete(photoOffer);
-        }else {
+        File file = new File("images" + File.separator + photoOffer.getURl());
+        if (file.delete()) {
+            photoOfferRepository.delete(photoOffer);
+        } else {
             throw new BadRequestException("Can not delete photo!");
         }
     }

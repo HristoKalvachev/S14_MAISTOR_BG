@@ -20,7 +20,7 @@ public class ApplicationForOfferService extends AbstractService{
 
     public ApplicationForOfferDTO offerApplication(ApplicationForOfferDTO dto, int id){
         Craftsman craftsman = getCraftsmanById(id);
-        Offer offer = findOfferById(id);
+        Offer offer = getOfferById(id);
         if (offer.isClosed()){
             throw new BadRequestException("The offer is closed!");
         }
@@ -33,7 +33,7 @@ public class ApplicationForOfferService extends AbstractService{
     }
 
     public List<CraftsmanApplicantDTO> getAllOfferApplicants(int offerId, int ownerId){
-        Offer offer = findOfferById(offerId);
+        Offer offer = getOfferById(offerId);
         User offerOwner = getUserById(ownerId);
         if (offer.getOwner() != offerOwner){
             throw new BadRequestException("You are not offer owner!");
@@ -51,7 +51,7 @@ public class ApplicationForOfferService extends AbstractService{
     }
 
     public CraftsmanApplicantDTO selectCraftsmanForOffer(int offerId, int craftsmanId, int offerOwner){
-        Offer offer = findOfferById(offerId);
+        Offer offer = getOfferById(offerId);
         User user = getUserById(offerId);
         if (offer.getOwner() != user){
             throw new BadRequestException("You are not offer owner!");

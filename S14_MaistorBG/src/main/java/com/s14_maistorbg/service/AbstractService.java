@@ -1,5 +1,6 @@
 package com.s14_maistorbg.service;
 
+import com.s14_maistorbg.model.entities.Category;
 import com.s14_maistorbg.model.entities.Craftsman;
 import com.s14_maistorbg.model.entities.Offer;
 import com.s14_maistorbg.model.entities.User;
@@ -49,9 +50,14 @@ public abstract class AbstractService {
         return craftsManRepository.findById(id).orElseThrow(()-> new NotFoundException("Craftsman not found!"));
     }
 
-    protected Offer findOfferById(int offerId) {
+    protected Offer getOfferById(int offerId) {
         return offerRepository.findById(offerId)
                 .orElseThrow(() -> new NotFoundException("Offer does not exist"));
+    }
+
+    protected Category getCategoryById(int categoryId) {
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NotFoundException("Category does not exist"));
     }
 
     public String createFileAndReturnName(MultipartFile file) throws IOException {

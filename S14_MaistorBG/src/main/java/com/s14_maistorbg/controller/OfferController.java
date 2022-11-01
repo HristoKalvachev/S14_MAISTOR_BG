@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-public class OfferController extends ExceptionController {
+public class OfferController extends AbstractController {
 
     @Autowired
     private OfferService offerService;
@@ -41,10 +41,10 @@ public class OfferController extends ExceptionController {
     @ResponseStatus(code = HttpStatus.OK)
     public ResponseOfferDTO deleteOffer(@PathVariable int id, HttpServletRequest request) {
         int loggedUserId = getLoggedUserId(request);
-        return offerService.deleteOffer(id);
+        return offerService.deleteOffer(id, loggedUserId);
     }
 
-    @GetMapping("/offers/{cid}")
+    @GetMapping("/offers/{cid}/craftsman")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public List<ResponseOfferDTO> getAllOffersDoneByCraftsman(@PathVariable int cid) {
         return offerService.getAllOffersDoneByCraftsman(cid);

@@ -14,13 +14,14 @@ import java.io.File;
 import java.io.IOException;
 
 @Service
-public class PhotoCraftsmanService extends AbstractService{
+public class PhotoCraftsmanService extends AbstractService {
 
     public String uploadPhoto(int id, MultipartFile file) {
+        int maxPhotos = 5;
         try {
             Craftsman craftsman = getCraftsmanById(id);
-            if (craftsman.getMyPhotos().size() >= 5) {
-                throw new UnauthorizedException("You can add maximum 5 pictures!");
+            if (craftsman.getMyPhotos().size() >= maxPhotos) {
+                throw new UnauthorizedException("You can add maximum " + maxPhotos + " pictures!");
             }
             String name = createFileAndReturnName(file);
 
@@ -36,12 +37,12 @@ public class PhotoCraftsmanService extends AbstractService{
     }
 
     public void deleteOfferPhoto(int cid, int pid) {
-        Craftsman craftsman = getCraftsmanById(cid);
+        getCraftsmanById(cid);
         PhotoCraftsman photoCraftsman = photoCraftsmanRepository.findById(pid).orElseThrow(() -> new NotFoundException("Photo not found!"));
-        File file = new File("images"+File.separator+photoCraftsman.getURL());
-        if(file.delete()){
+        File file = new File("images" + File.separator + photoCraftsman.getURL());
+        if (file.delete()) {
             photoCraftsmanRepository.delete(photoCraftsman);
-        }else {
+        } else {
             throw new BadRequestException("Can not delete photo!");
         }
     }

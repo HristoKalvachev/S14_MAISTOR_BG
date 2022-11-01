@@ -2,10 +2,7 @@ package com.s14_maistorbg.controller;
 
 
 import com.s14_maistorbg.model.dto.ApplicationForOfferDTO;
-import com.s14_maistorbg.model.dto.categoryDTOs.CategoryDTO;
-import com.s14_maistorbg.model.dto.categoryDTOs.CategoryTypeDTO;
 import com.s14_maistorbg.model.dto.craftsmanDTOs.CraftsmanApplicantDTO;
-import com.s14_maistorbg.model.dto.offerDTOs.ResponseOfferDTO;
 import com.s14_maistorbg.service.ApplicationForOfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
-public class ApplicationForOfferController extends ExceptionController{
+public class ApplicationForOfferController extends AbstractController {
 
     @Autowired
     private ApplicationForOfferService applicationForOfferService;

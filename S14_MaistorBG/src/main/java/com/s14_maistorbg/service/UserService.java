@@ -63,9 +63,8 @@ public class UserService extends AbstractService {
         if (user.getRole().getId() == CRAFTSMAN_ROLE_ID) {
             User craftsmanToAdd = userRepository.findByUsername(user.getUsername())
                     .orElseThrow(() -> new NotFoundException("User is not add!"));
+            Category category1 = getCategoryById(dto.getRepairCategoryId());
             Craftsman craftsman = new Craftsman();
-            Category category1 = categoryRepository.findById(dto.getRepairCategoryId())
-                    .orElseThrow(() -> new NotFoundException("Category not found!"));
             craftsman.setUserId(craftsmanToAdd.getId());
             craftsman.setCategory(category1);
             craftsManRepository.save(craftsman);
