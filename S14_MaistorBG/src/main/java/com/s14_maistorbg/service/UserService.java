@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -62,7 +63,6 @@ public class UserService extends AbstractService {
         user.setPassword(encoder.encode(user.getPassword()));
         user.setRegisteredAt(LocalDateTime.now());
         userRepository.save(user);
-        //Todo Make ROLEID NOT A MAGIC NUMBER
         if (user.getRole().getId() == CRAFTSMAN_ROLE_ID) {
             User craftsmanToAdd = userRepository.findByUsername(user.getUsername())
                     .orElseThrow(() -> new NotFoundException("User is not add!"));
@@ -70,7 +70,7 @@ public class UserService extends AbstractService {
             Craftsman craftsman = new Craftsman();
             craftsman.setUserId(craftsmanToAdd.getId());
             craftsman.setCategory(category1);
-
+            craftsman.setMyCategories(new ArrayList<>());
             craftsman.getMyCategories().add(category1);
             craftsManRepository.save(craftsman);
         }
@@ -78,7 +78,6 @@ public class UserService extends AbstractService {
     }
 
     private void validateUserInformation(RegisterDTO dto) {
-        //TODO TRY TO MAKE ONE QUERY
         if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
             throw new BadRequestException("The username exist!");
         }
@@ -112,28 +111,35 @@ public class UserService extends AbstractService {
         if (!UserUtility.isPhoneValid(newUser.getPhoneNumber())) {
             throw new BadRequestException("Invalid phone number!");
         }
-        Optional<User> editedUser = userRepository.findById(id);
-        EditUserDTO dto = modelMapper.map(editedUser, EditUserDTO.class);
-        dto.setUsername(newUser.getUsername());
-        dto.setFirstName(newUser.getFirstName());
-        dto.setLastName(newUser.getLastName());
-        dto.setPhoneNumber(newUser.getPhoneNumber());
-        dto.setProfilePicUrl(newUser.getProfilePicUrl());
-        userRepository.save(modelMapper.map(dto, User.class));
-        return dto;
+        User editedUser = getUserById(id);
+        editedUser.setUsername(newUser.getUsername());
+        editedUser.setFirstName(newUser.getFirstName());
+        editedUser.setLastName(newUser.getLastName());
+        editedUser.setPhoneNumber(newUser.getPhoneNumber());
+        editedUser.setProfilePicUrl(newUser.getProfilePicUrl());
+        userRepository.save(editedUser);
+        return modelMapper.map(editedUser, EditUserDTO.class);
     }
 
-    public UserWithoutPassDTO delete(int id) {
-        User userForDelete = userRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException("User does not exist!"));
-        userRepository.delete(userForDelete);
+    public UserWithoutPassDTO deleteProfile(int id) {
+        User userForDelete = getUserById(id);
+        userForDelete.setUsername("Deleted at " + LocalDateTime.now());
+        userForDelete.setFirstName("Deleted at " + LocalDateTime.now());
+        userForDelete.setLastName("Deleted at " + LocalDateTime.now());
+        userForDelete.setPassword("Deleted at " + LocalDateTime.now());
+        userForDelete.setEmail("Deleted at " + LocalDateTime.now());
+        userForDelete.setPhoneNumber("Deleted at " + LocalDateTime.now());
+        userForDelete.setProfilePicUrl("Deleted at " + LocalDateTime.now());
+        userRepository.save(userForDelete);
         return modelMapper.map(userForDelete, UserWithoutPassDTO.class);
     }
 
     public UserWithoutPassDTO getById(int userId) {
         User user = getUserById(userId);
         UserWithoutPassDTO dto = modelMapper.map(user, UserWithoutPassDTO.class);
-        dto.setPosts(user.getMyOffers().stream().map(p -> modelMapper.map(p, OfferWithoutOwnerDTO.class)).collect(Collectors.toList()));
+        dto.setPosts(user.getMyOffers().stream()
+                .map(p -> modelMapper.map(p, OfferWithoutOwnerDTO.class))
+                .collect(Collectors.toList()));
         return dto;
     }
 

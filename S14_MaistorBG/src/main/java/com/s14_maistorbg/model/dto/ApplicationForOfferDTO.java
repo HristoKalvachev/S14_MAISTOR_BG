@@ -11,6 +11,6 @@ public class ApplicationForOfferDTO {
 
     private int price;
     private int deadline;
-    private int offerId;
+    private int id;
 
 }

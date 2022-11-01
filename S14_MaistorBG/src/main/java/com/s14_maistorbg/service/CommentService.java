@@ -19,10 +19,10 @@ import java.util.List;
 @Service
 public class CommentService extends AbstractService{
 
-    public ResponseCommentDTO addComment(AddCommentDTO commentDTO, int userId){
+    public ResponseCommentDTO addComment(AddCommentDTO commentDTO, int userId, int craftsmanToRate){
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         User user = getUserById(userId);
-        Craftsman craftsman = getCraftsmanById(userId);
+        Craftsman craftsman = getCraftsmanById(craftsmanToRate);
         validateCommentText(commentDTO.getComment());
         Comment comment = modelMapper.map(commentDTO, Comment.class);
         comment.setCommentOwner(user);
@@ -64,8 +64,12 @@ public class CommentService extends AbstractService{
 
     public List<CommentWithUsernameDTO> getAllCommentByOwnerId(int ownerId){
         User user = getUserById(ownerId);
-        //Todo check comment owner field
         List<Comment> comments = commentRepository.findAllByCommentOwner(user);
+        for (Comment c : comments){
+            if (c.getCommentOwner().getId() != user.getId()){
+                throw new BadRequestException("You are not owner of the comments!");
+            }
+        }
         List<CommentWithUsernameDTO> commentsWithUsername = new ArrayList<>();
         for (int i = 0; i < comments.size(); i++) {
             CommentWithUsernameDTO comment = modelMapper.map(comments.get(i), CommentWithUsernameDTO.class);

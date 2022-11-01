@@ -22,12 +22,10 @@ public class CraftsmanService extends AbstractService {
 
     @Transactional
     public CraftsmanDTO craftsmanAddCategory(int id, String categoryName) {
-        // Todo refactor everything
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         User userCraftsman = getUserById(id);
         Craftsman craftsman = getCraftsmanById(id);
-        Category category = categoryRepository.findByType(categoryName)
-                .orElseThrow(() -> new NotFoundException("Category not found!"));
+        Category category = getCategoryByType(categoryName);
         if (craftsman.getMyCategories().contains(category)) {
             throw new BadRequestException("Craftsman already have this category!");
         }
@@ -36,10 +34,6 @@ public class CraftsmanService extends AbstractService {
         category.getMyCraftsmans().add(craftsman);
         categoryRepository.save(category);
         CraftsmanDTO craftsmanDTO = modelMapper.map(userCraftsman, CraftsmanDTO.class);
-//        craftsmanDTO.setId(craftsman.getUserId());
-//        craftsmanDTO.setFirstName(userCraftsman.getFirstName());
-//        craftsmanDTO.setLastName(userCraftsman.getLastName());
-//        craftsmanDTO.setUsername(userCraftsman.getUsername());
         for (int i = 0; i < craftsman.getMyCategories().size(); i++) {
             craftsmanDTO.getCategories().add(modelMapper.map(craftsman.getMyCategories().get(i), CategoryTypeDTO.class));
         }
@@ -48,7 +42,6 @@ public class CraftsmanService extends AbstractService {
 
     @Transactional
     public CraftsmanDTO craftsmanDeleteCategory(int id, String categoryName) {
-        // Todo
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         User userCraftsman = getUserById(id);
         Craftsman craftsman = getCraftsmanById(id);
@@ -62,10 +55,6 @@ public class CraftsmanService extends AbstractService {
         category.getMyCraftsmans().remove(craftsman);
         categoryRepository.save(category);
         CraftsmanDTO craftsmanDTO = modelMapper.map(userCraftsman, CraftsmanDTO.class);
-//        craftsmanDTO.setId(craftsman.getUserId());
-//        craftsmanDTO.setFirstName(userCraftsman.getFirstName());
-//        craftsmanDTO.setLastName(userCraftsman.getLastName());
-//        craftsmanDTO.setUsername(userCraftsman.getUsername());
         for (int i = 0; i < craftsman.getMyCategories().size(); i++) {
             craftsmanDTO.getCategories().add(modelMapper.map(craftsman.getMyCategories().get(i), CategoryTypeDTO.class));
         }
@@ -90,7 +79,6 @@ public class CraftsmanService extends AbstractService {
         User user = getUserById(id);
         CraftsmanProfileDTO craftsmanProfileDTO = new CraftsmanProfileDTO();
         craftsmanProfileDTO = setProfileDto(craftsmanProfileDTO, craftsman, user);
-
         return craftsmanProfileDTO;
     }
 

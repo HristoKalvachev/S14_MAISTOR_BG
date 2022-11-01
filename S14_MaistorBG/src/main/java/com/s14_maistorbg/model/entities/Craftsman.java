@@ -31,9 +31,6 @@ public class Craftsman {
     private List<Rate> ratesReceived;
     @OneToMany(mappedBy = "craftsman")
     private List<PhotoCraftsman> myPhotos;
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private Offer selectedCraftsmanId;
     @ManyToMany
     @JoinTable(
             name = "craftsmans_categories",

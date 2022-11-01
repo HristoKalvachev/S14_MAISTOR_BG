@@ -33,6 +33,7 @@ public class CronJob {
         for(Offer offer : allOffer){
             if (offer.getDurationData().isBefore(dateNow)){
                 offer.setClosed(true);
+                offerRepository.save(offer);
                 sendEmail(offer.getOwner().getEmail(),
                 "Expired offer",
                 "Your offer " + offer.getOfferTitle() + " was deactivate.");

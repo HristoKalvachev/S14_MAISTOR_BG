@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Setter
@@ -15,7 +16,7 @@ public class AddCommentDTO {
 
     private int id;
     private String comment;
-    private LocalDate commentAt;
+    private LocalDateTime commentAt;
     private int craftsmanId;
     private Optional<Integer> parentCommentId;
 }

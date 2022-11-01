@@ -51,17 +51,18 @@ public class UserController extends AbstractController {
         return "You are successfully logout!";
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/users")
     @ResponseStatus(code = HttpStatus.OK)
-    public UserWithoutPassDTO delete(@PathVariable int id) {
-        return userService.delete(id);
+    public UserWithoutPassDTO deleteProfile(HttpServletRequest request) {
+        int userId = getLoggedUserId(request);
+        return userService.deleteProfile(userId);
     }
 
-    @PutMapping("/users/{id}")
+    @PutMapping("/users")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public ResponseEntity<EditUserDTO> editAccount(@RequestBody EditUserDTO newUser, HttpServletRequest request) {
-        getLoggedUserId(request);
-        return ResponseEntity.ok(userService.editAccount(newUser, Integer.parseInt(request.getSession().getId())));
+        int userId = getLoggedUserId(request);
+        return ResponseEntity.ok(userService.editAccount(newUser, userId));
     }
 
     @PutMapping("/users/change_pass/{id}")

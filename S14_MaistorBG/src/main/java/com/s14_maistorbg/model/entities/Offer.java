@@ -43,7 +43,8 @@ public class Offer {
     private List<PhotoOffer> offerPhotos;
     @OneToMany(mappedBy = "appliedOffer")
     private List<ApplicationForOffer> applicationsForOffer;
-    @OneToOne(mappedBy = "selectedCraftsmanId")
-    private Craftsman selectedCraftsmanId;
+    @ManyToOne
+    @JoinColumn(name = "selected_application_id")
+    private ApplicationForOffer selectedApplication;
 
 }

@@ -21,11 +21,11 @@ public class CommentController extends AbstractController {
     @Autowired
     private CommentService commentService;
 
-    @PostMapping("/comments")
+    @PostMapping("/comments/{cid}")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public ResponseCommentDTO addComment(@RequestBody AddCommentDTO commentDTO, HttpServletRequest request) {
+    public ResponseCommentDTO addComment(@RequestBody AddCommentDTO commentDTO, HttpServletRequest request, @PathVariable int cid) {
         int id = getLoggedUserId(request);
-        return commentService.addComment(commentDTO, id);
+        return commentService.addComment(commentDTO, id, cid);
     }
 
     @PutMapping("/comments/{id}")
