@@ -11,6 +11,7 @@ import com.s14_maistorbg.model.entities.Offer;
 import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
 import com.s14_maistorbg.model.exceptions.NotFoundException;
+import com.s14_maistorbg.model.exceptions.UnauthorizedException;
 import org.springframework.stereotype.Service;
 
 
@@ -22,7 +23,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class OfferService extends AbstractService {
-
 
     public ResponseOfferDTO postOffer(ResponseOfferDTO offerDTO, int ownerId) {
         User user = getUserById(ownerId);
@@ -69,10 +69,13 @@ public class OfferService extends AbstractService {
                     o.setBudget(editOfferDTO.getBudget());
                     return offerRepository.save(o);
                 }).orElseThrow(() -> new NotFoundException("No such user found!"));
+        if(updatedOffer.getOwner().getId()!=editOfferDTO.getOwnerId()){
+            throw new UnauthorizedException("Can not edit other offers!");
+        }
         return modelMapper.map(updatedOffer, OfferWithoutOwnerDTO.class);
     }
 
-    public ResponseOfferDTO deleteOffer(int id) {
+    public ResponseOfferDTO deleteOffer(int id, int userId) {
         Offer wantedOffer = offerRepository.findById(id).orElseThrow(() -> new BadRequestException("No such offer found!"));
         offerRepository.delete(wantedOffer);
         ResponseOfferDTO offerDTO = modelMapper.map(wantedOffer, ResponseOfferDTO.class);
@@ -92,6 +95,6 @@ public class OfferService extends AbstractService {
     public List<ResponseOfferDTO> getAll() {
         List<Offer> offers = offerRepository.findAll();
         return offers.stream()
-                .map(e -> modelMapper.map(e,ResponseOfferDTO.class)).collect(Collectors.toList());
+                .map(e -> modelMapper.map(e, ResponseOfferDTO.class)).collect(Collectors.toList());
     }
 }

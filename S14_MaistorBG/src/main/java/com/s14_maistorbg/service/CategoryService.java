@@ -13,6 +13,7 @@ import java.util.List;
 
 @Service
 public class CategoryService extends AbstractService{
+
     public CategoryDTO addCategory(CategoryTypeDTO categoryTypeDTO){
         validateCategoryType(categoryTypeDTO.getType());
         Category category = new Category();
@@ -22,7 +23,7 @@ public class CategoryService extends AbstractService{
     }
 
     public CategoryDTO editCategory(CategoryTypeDTO categoryTypeDTO, int cid) {
-        Category category = categoryRepository.findById(cid).orElseThrow(()-> new NotFoundException("The category does not exist!"));
+        Category category = getCategoryById(cid);
         validateCategoryType(categoryTypeDTO.getType());
         category.setType(categoryTypeDTO.getType());
         categoryRepository.save(category);
@@ -30,7 +31,7 @@ public class CategoryService extends AbstractService{
     }
 
     public CategoryDTO deleteCategory(int categoryId){
-        Category category = categoryRepository.findById(categoryId).orElseThrow(()-> new NotFoundException("The category does not exist!"));
+        Category category = getCategoryById(categoryId);
         categoryRepository.delete(category);
         return modelMapper.map(category, CategoryDTO.class);
     }

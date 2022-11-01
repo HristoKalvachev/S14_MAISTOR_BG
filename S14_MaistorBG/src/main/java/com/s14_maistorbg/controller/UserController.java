@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @RestController
-
 public class UserController extends AbstractController {
 
     @Autowired

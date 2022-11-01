@@ -12,6 +12,7 @@ public class EditOfferDTO {
 
     private String offerTitle;
     private String jobDescription;
+    private int ownerId;
     private double budget;
     private int cityId;
     private int repairCategoryId;

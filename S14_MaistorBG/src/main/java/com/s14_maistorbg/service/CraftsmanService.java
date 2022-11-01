@@ -22,7 +22,7 @@ public class CraftsmanService extends AbstractService {
 
     @Transactional
     public CraftsmanDTO craftsmanAddCategory(int id, String categoryName) {
-        //Todo refactor everything
+        // Todo refactor everything
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         User userCraftsman = getUserById(id);
         Craftsman craftsman = getCraftsmanById(id);
@@ -48,7 +48,7 @@ public class CraftsmanService extends AbstractService {
 
     @Transactional
     public CraftsmanDTO craftsmanDeleteCategory(int id, String categoryName) {
-        //Todo
+        // Todo
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         User userCraftsman = getUserById(id);
         Craftsman craftsman = getCraftsmanById(id);
@@ -114,8 +114,7 @@ public class CraftsmanService extends AbstractService {
     }
 
     public List<CraftsmanDTO> getAllByCategory(int id) {
-        Category category = categoryRepository
-                .findById(id).orElseThrow(() -> new NotFoundException("Category not found!"));
+        Category category = getCategoryById(id);
         List<Craftsman> craftsmen = craftsManRepository.findAllByMyCategoriesContaining(category);
 
         return craftsmen.stream().map(e->modelMapper.map(e,CraftsmanDTO.class)).collect(Collectors.toList());

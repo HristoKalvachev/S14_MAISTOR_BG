@@ -17,12 +17,12 @@ import java.util.Optional;
 @Service
 public class RateService extends AbstractService {
 
-    private final int minRate =1;
-    private final int maxRate =10;
+    private final static int MIN_RATE =1;
+    private final static int MAX_RATE =10;
 
     public RateResponseDTO rateCraftsman(int craftsmanId, RateCraftsManDTO dto) {
-        Craftsman craftsMan = craftsManRepository.findById(craftsmanId)
-                .orElseThrow(() -> new NotFoundException("Craftsman to be rated not found!"));
+        Craftsman craftsMan = getCraftsmanById(craftsmanId);
+
         User craftsmanAsUser = userRepository.findById(craftsmanId)
                 .orElseThrow(() -> new NotFoundException("Craftsman to be rated not found!"));
         User rater = getUserById(dto.getId());
@@ -52,7 +52,7 @@ public class RateService extends AbstractService {
         if (rater.getRole().getId() == craftsmanRoleID) {
             throw new UnauthorizedException("Craftsmen can`t rate other craftsmen!");
         }
-        if (dto.getRating() < minRate || dto.getRating() > maxRate) {
+        if (dto.getRating() < MIN_RATE || dto.getRating() > MAX_RATE) {
             throw new BadRequestException("Rate must be between 1 and 10!");
         }
     }

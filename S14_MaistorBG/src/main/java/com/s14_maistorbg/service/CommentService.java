@@ -19,12 +19,10 @@ import java.util.List;
 @Service
 public class CommentService extends AbstractService{
 
-
     public ResponseCommentDTO addComment(AddCommentDTO commentDTO, int userId){
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         User user = getUserById(userId);
-        Craftsman craftsman = craftsManRepository.findById(commentDTO.getCraftsmanId())
-                .orElseThrow(()-> new NotFoundException("User not found!"));
+        Craftsman craftsman = getCraftsmanById(userId);
         validateCommentText(commentDTO.getComment());
         Comment comment = modelMapper.map(commentDTO, Comment.class);
         comment.setCommentOwner(user);
@@ -79,12 +77,13 @@ public class CommentService extends AbstractService{
     }
 
     private void validateCommentText(String comment){
+        int minCommentLength = 10;
         if (comment == null ||
             comment.isBlank() ||
             comment.isEmpty()){
             throw new BadRequestException("There is no text in the comment body!");
         }
-        if (comment.length() < 10){
+        if (comment.length() < minCommentLength){
             throw new BadRequestException("Write a more describing comment!");
         }
     }

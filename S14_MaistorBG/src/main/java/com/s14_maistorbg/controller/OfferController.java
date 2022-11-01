@@ -41,10 +41,10 @@ public class OfferController extends AbstractController {
     @ResponseStatus(code = HttpStatus.OK)
     public ResponseOfferDTO deleteOffer(@PathVariable int id, HttpServletRequest request) {
         int loggedUserId = getLoggedUserId(request);
-        return offerService.deleteOffer(id);
+        return offerService.deleteOffer(id, loggedUserId);
     }
 
-    @GetMapping("/offers/{cid}")
+    @GetMapping("/offers/{cid}/craftsman")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public List<ResponseOfferDTO> getAllOffersDoneByCraftsman(@PathVariable int cid) {
         return offerService.getAllOffersDoneByCraftsman(cid);

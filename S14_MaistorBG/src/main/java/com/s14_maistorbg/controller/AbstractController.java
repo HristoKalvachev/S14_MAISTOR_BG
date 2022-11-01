@@ -77,7 +77,7 @@ public abstract class AbstractController {
         session.setAttribute(LOGGED, true);
         session.setAttribute(USER_ID, id);
         session.setAttribute(REMOTE_IP, request.getRemoteAddr());
-        session.setMaxInactiveInterval(600);
+        session.setMaxInactiveInterval(30*60);
     }
 
     public int getLoggedUserId(HttpServletRequest request){
