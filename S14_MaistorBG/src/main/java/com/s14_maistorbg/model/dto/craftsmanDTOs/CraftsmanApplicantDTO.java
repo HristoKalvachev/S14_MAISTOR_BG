@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class CraftsmanApplicantDTO {
+    private int id;
     private String firstName;
     private String lastName;
     private String phoneNumber;

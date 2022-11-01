@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 @RestController
-public class FileController extends ExceptionController {
+public class FileController extends AbstractController {
 
     @GetMapping("/images/{pathFile}")
     @ResponseStatus(code = HttpStatus.OK)

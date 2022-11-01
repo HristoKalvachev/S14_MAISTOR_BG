@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -31,7 +32,7 @@ public class User {
     @JoinColumn(name = "city_id", nullable = false)
     private City city;
     @Column
-    private LocalDate registeredAt;
+    private LocalDateTime registeredAt;
     @Column
     private String profilePicUrl;
     @ManyToOne

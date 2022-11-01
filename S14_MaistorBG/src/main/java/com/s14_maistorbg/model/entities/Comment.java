@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comments")
@@ -20,7 +21,7 @@ public class Comment {
     @Column
     private String comment;
     @Column
-    private LocalDate commentAt;
+    private LocalDateTime commentAt;
     @ManyToOne
     @JoinColumn(name = "comment_from")
     private User commentOwner;

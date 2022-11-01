@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession;
 
 @RestController
 
-public class UserController extends ExceptionController {
+public class UserController extends AbstractController {
 
     @Autowired
     private UserService userService;
@@ -29,8 +29,8 @@ public class UserController extends ExceptionController {
 
     @PostMapping("/auth")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public UserWithoutPassDTO login(@RequestBody LoginDTO dto, HttpServletRequest request) {
-        UserWithoutPassDTO result = userService.login(dto);
+    public UserWithoutPostsDTO login(@RequestBody LoginDTO dto, HttpServletRequest request) {
+        UserWithoutPostsDTO result = userService.login(dto);
         if (result != null) {
             logUser(request, result.getId());
             return result;
@@ -47,9 +47,9 @@ public class UserController extends ExceptionController {
 
     @PostMapping("/logout")
     @ResponseStatus(code = HttpStatus.OK)
-    public void logout(HttpSession session) {
+    public String logout(HttpSession session) {
         session.invalidate();
-        System.out.println("You are successful logout! See you next time.");
+        return "You are successfully logout!";
     }
 
     @DeleteMapping("/users/{id}")

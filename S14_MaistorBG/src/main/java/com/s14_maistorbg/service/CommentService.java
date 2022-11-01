@@ -12,6 +12,7 @@ import com.s14_maistorbg.model.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class CommentService extends AbstractService{
         Comment comment = modelMapper.map(commentDTO, Comment.class);
         comment.setCommentOwner(user);
         comment.setCraftsman(craftsman);
+        comment.setCommentAt(LocalDateTime.now());
         if (commentDTO.getParentCommentId() != null){
             comment.setParentComment(commentRepository.findById(commentDTO.getParentCommentId().get())
                     .orElseThrow(()-> new BadRequestException("Invalid parent comment!")));

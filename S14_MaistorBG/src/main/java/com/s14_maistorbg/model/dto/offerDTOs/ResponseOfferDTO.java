@@ -26,7 +26,7 @@ public class ResponseOfferDTO {
     private UserWithoutPostsDTO owner;
     private List<PhotoOfferWithoutOfferDTO> photoOffers;
     private boolean isClosed;
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
 
 }

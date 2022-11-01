@@ -20,7 +20,7 @@ public class ApplicationForOfferService extends AbstractService{
 
     public ApplicationForOfferDTO offerApplication(ApplicationForOfferDTO dto, int id){
         Craftsman craftsman = getCraftsmanById(id);
-        Offer offer = findOfferById(id);
+        Offer offer = findOfferById(dto.getOfferId());
         if (offer.isClosed()){
             throw new BadRequestException("The offer is closed!");
         }
@@ -28,6 +28,7 @@ public class ApplicationForOfferService extends AbstractService{
         applicationForOffer.setCraftsman(craftsman);
         applicationForOffer.setAppliedOffer(offer);
         applicationForOffer.setCreatedAt(LocalDateTime.now());
+        applicationForOffer.setId(0);
         applicationForOfferRepository.save(applicationForOffer);
         return modelMapper.map(applicationForOffer, ApplicationForOfferDTO.class);
     }
@@ -43,31 +44,41 @@ public class ApplicationForOfferService extends AbstractService{
             Craftsman craftsman = offer.getApplicationsForOffer().get(i).getCraftsman();
             User user = getUserById(craftsman.getUserId());
             CraftsmanApplicantDTO applicant = modelMapper.map(user, CraftsmanApplicantDTO.class);
+            applicant.setMyCategories(new ArrayList<>());
             for (int j = 0; j < craftsman.getMyCategories().size(); j++) {
                 applicant.getMyCategories().add(modelMapper.map(craftsman.getMyCategories().get(i), CategoryTypeDTO.class));
             }
+            applicants.add(applicant);
         }
         return applicants;
     }
 
     public CraftsmanApplicantDTO selectCraftsmanForOffer(int offerId, int craftsmanId, int offerOwner){
         Offer offer = findOfferById(offerId);
-        User user = getUserById(offerId);
+        User user = getUserById(offerOwner);
         if (offer.getOwner() != user){
             throw new BadRequestException("You are not offer owner!");
         }
-        Craftsman craftsman = null;
+        Craftsman craftsman;
+        CraftsmanApplicantDTO selectApplicant = null;
         for (int i = 0; i < offer.getApplicationsForOffer().size(); i++) {
             craftsman = offer.getApplicationsForOffer().get(i).getCraftsman();
             if (craftsman.getUserId() == craftsmanId){
+                User userCraftsman = getUserById(craftsman.getUserId());
+                selectApplicant = modelMapper.map(userCraftsman, CraftsmanApplicantDTO.class);
+                selectApplicant.setMyCategories(new ArrayList<>());
+                for (int j = 0; j < craftsman.getMyCategories().size(); j++) {
+                    selectApplicant.getMyCategories().add(modelMapper.map(craftsman.getMyCategories().get(i), CategoryTypeDTO.class));
+                }
                 offer.setSelectedCraftsmanId(craftsman);
                 offer.setClosed(true);
+                offerRepository.save(offer);
                 break;
             }else {
                 throw new NotFoundException("The chosen craftsman did not apply for this offer!");
             }
         }
-        return modelMapper.map(craftsman, CraftsmanApplicantDTO.class);
+        return selectApplicant;
     }
 
 }

@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,7 @@ public class CronJob {
     @Scheduled(cron = "0 0 0 * * *")
     public void deactivateExpiredOffers(){
         List<Offer> allOffer = getAllOffers();
-        LocalDate dateNow = LocalDate.now();
+        LocalDateTime dateNow = LocalDateTime.now();
         for(Offer offer : allOffer){
             if (offer.getDurationData().isBefore(dateNow)){
                 offer.setClosed(true);
@@ -42,7 +43,7 @@ public class CronJob {
     @Scheduled(cron = "0 0 0 * * *")
     public void sendNoticeMailForOffer(){
         List<Offer> allOffer = getAllOffers();
-        LocalDate dateAfterThreeDays = LocalDate.now().plusDays(3);
+        LocalDateTime dateAfterThreeDays = LocalDateTime.now().plusDays(3);
         for(Offer offer : allOffer){
             if (offer.getDurationData().isEqual(dateAfterThreeDays)){
                 sendEmail(offer.getOwner().getEmail(),

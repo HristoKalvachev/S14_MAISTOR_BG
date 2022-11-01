@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-public class OfferController extends ExceptionController {
+public class OfferController extends AbstractController {
 
     @Autowired
     private OfferService offerService;

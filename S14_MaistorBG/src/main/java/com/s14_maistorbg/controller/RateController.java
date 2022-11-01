@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-public class RateController extends ExceptionController {
+public class RateController extends AbstractController {
 
     @Autowired
     RateService rateService;

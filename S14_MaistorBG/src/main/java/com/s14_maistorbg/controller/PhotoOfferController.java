@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-public class PhotoOfferController extends ExceptionController {
+public class PhotoOfferController extends AbstractController {
 
     @Autowired
     PhotoOfferService photoOfferService;

@@ -2,9 +2,6 @@ package com.s14_maistorbg.controller;
 
 import com.s14_maistorbg.model.dto.categoryDTOs.CategoryDTO;
 import com.s14_maistorbg.model.dto.categoryDTOs.CategoryTypeDTO;
-import com.s14_maistorbg.model.dto.commentsDTOs.AddCommentDTO;
-import com.s14_maistorbg.model.dto.commentsDTOs.CommentWithUsernameDTO;
-import com.s14_maistorbg.model.dto.commentsDTOs.ResponseCommentDTO;
 import com.s14_maistorbg.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-public class CategoryController extends ExceptionController{
+public class CategoryController extends AbstractController {
 
     @Autowired
     CategoryService categoryService;

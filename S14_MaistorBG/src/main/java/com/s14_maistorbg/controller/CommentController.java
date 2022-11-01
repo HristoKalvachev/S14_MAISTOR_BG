@@ -6,7 +6,6 @@ import com.s14_maistorbg.model.dto.commentsDTOs.EditCommentDTO;
 import com.s14_maistorbg.model.dto.commentsDTOs.ResponseCommentDTO;
 import com.s14_maistorbg.model.entities.Comment;
 import com.s14_maistorbg.model.exceptions.ForbiddenException;
-import com.s14_maistorbg.model.repositories.CommentRepository;
 import com.s14_maistorbg.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,10 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-public class CommentController extends ExceptionController{
+public class CommentController extends AbstractController {
 
     @Autowired
     private CommentService commentService;
