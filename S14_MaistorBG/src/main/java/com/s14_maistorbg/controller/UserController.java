@@ -57,22 +57,23 @@ public class UserController extends AbstractController {
         return userService.delete(id);
     }
 
-    @PutMapping("/users/{id}")
+    @PutMapping("/users")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public ResponseEntity<EditUserDTO> editAccount(@RequestBody EditUserDTO newUser, HttpServletRequest request) {
-        getLoggedUserId(request);
-        return ResponseEntity.ok(userService.editAccount(newUser, Integer.parseInt(request.getSession().getId())));
+        int userId = getLoggedUserId(request);
+        return ResponseEntity.ok(userService.editAccount(newUser, userId));
     }
 
     @PutMapping("/users/change_pass/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public String changePassword(@RequestBody ChangePasswordDTO dto, @PathVariable int id) {
+    public String changePassword(@RequestBody ChangePasswordDTO dto, @PathVariable int id,HttpServletRequest req) {
+        getLoggedUserId(req);
         return userService.changePassword(dto, id);
     }
 
     @PostMapping("/users/{id}/photo")
     @ResponseStatus(code = HttpStatus.OK)
     public String uploadProfilePhoto(@PathVariable int id, @RequestParam(value = "file") MultipartFile file) {
-        return userService.uploadProfilePhoto(id,file);
+        return userService.uploadProfilePhoto(id, file);
     }
 }

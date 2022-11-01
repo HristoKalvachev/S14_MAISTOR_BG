@@ -7,6 +7,8 @@ import com.s14_maistorbg.service.RateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 @RestController
 public class RateController extends AbstractController {
@@ -15,7 +17,8 @@ public class RateController extends AbstractController {
     RateService rateService;
 
     @PostMapping("/craftsman/{cId}/rate")
-    public RateResponseDTO rateCraftMan(@RequestBody RateCraftsManDTO dto, @PathVariable int cId) {
+    public RateResponseDTO rateCraftMan(@RequestBody RateCraftsManDTO dto, @PathVariable int cId,HttpServletRequest req) {
+        getLoggedUserId(req);
         return rateService.rateCraftsman(cId, dto);
     }
 

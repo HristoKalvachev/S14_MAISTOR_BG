@@ -59,7 +59,6 @@ public class UserService extends AbstractService {
                 .orElseThrow(() -> new NotFoundException("City not found!"));
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
-        //Todo Make ROLEID NOT A MAGIC NUMBER
         if (user.getRole().getId() == CRAFTSMAN_ROLE_ID) {
             User craftsmanToAdd = userRepository.findByUsername(user.getUsername())
                     .orElseThrow(() -> new NotFoundException("User is not add!"));
@@ -73,7 +72,6 @@ public class UserService extends AbstractService {
     }
 
     private void validateUserInformation(RegisterDTO dto) {
-        //TODO TRY TO MAKE ONE QUERY
         if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
             throw new BadRequestException("The username exist!");
         }
@@ -104,7 +102,7 @@ public class UserService extends AbstractService {
         if (!UserUtility.isPhoneValid(newUser.getPhoneNumber())) {
             throw new BadRequestException("Invalid phone number!");
         }
-        Optional<User> editedUser = userRepository.findById(id);
+        User editedUser = getUserById(id);
         EditUserDTO dto = modelMapper.map(editedUser, EditUserDTO.class);
         dto.setUsername(newUser.getUsername());
         dto.setFirstName(newUser.getFirstName());
@@ -131,7 +129,8 @@ public class UserService extends AbstractService {
 
     public String changePassword(ChangePasswordDTO dto, int id) {
         User user = getUserById(id);
-        if (!dto.getPassword().equals(user.getPassword())) {
+        boolean isPassCorrect = encoder.matches(dto.getPassword(), user.getPassword());
+        if (!isPassCorrect) {
             throw new BadRequestException("Incorrect password!");
         }
         if (!UserUtility.isPassValid(dto.getPassword())) {
@@ -140,7 +139,7 @@ public class UserService extends AbstractService {
         if (!dto.getNewPassword().equals(dto.getConfirmNewPassword())) {
             throw new BadRequestException("Password mismatch!");
         }
-        user.setPassword(dto.getNewPassword());
+        user.setPassword(encoder.encode(dto.getNewPassword()));
         userRepository.save(user);
 
         return "Password changed successfully!";

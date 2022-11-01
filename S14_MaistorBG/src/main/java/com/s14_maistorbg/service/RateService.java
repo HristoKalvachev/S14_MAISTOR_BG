@@ -63,7 +63,7 @@ public class RateService extends AbstractService {
         if (rate.getRater().getId() != rater.getId()) {
             throw new UnauthorizedException("Can`t edit other users rates!");
         }
-        if (dto.getRating() > 10 || dto.getRating() < 1) {
+        if (dto.getRating() > MAX_RATE || dto.getRating() < MIN_RATE) {
             throw new BadRequestException("Rate must be between 1 and 10!");
         }
         rate.setRating(dto.getRating());
