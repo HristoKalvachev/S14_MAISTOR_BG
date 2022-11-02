@@ -32,7 +32,7 @@ public class CronJob {
 
 
 
-    @Scheduled(cron = "1 * * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void deactivateExpiredOffers(){
         new Thread(() -> {
             List<Offer> allOffer = getAllOffers();
