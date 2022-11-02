@@ -39,7 +39,7 @@ public class RateController extends AbstractController {
 
     @GetMapping("/craftsman/{cId}/rate")
     @ResponseStatus(value = HttpStatus.OK)
-    public void getRate(@PathVariable int cId){
-        rateService.getRate(cId);
+    public double getRate(@PathVariable int cId){
+       return rateService.getRate(cId);
     }
 }

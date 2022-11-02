@@ -20,38 +20,39 @@ public class CraftsmanController extends AbstractController {
 
     @PostMapping("/craftsman_categories")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public CraftsmanDTO craftsmanAddCategory(@RequestBody CategoryTypeDTO categoryTypeDTO, HttpServletRequest request){
+    public CraftsmanDTO craftsmanAddCategory(@RequestBody CategoryTypeDTO categoryTypeDTO, HttpServletRequest request) {
         int id = getLoggedUserId(request);
         return craftsmanService.craftsmanAddCategory(id, categoryTypeDTO.getType());
     }
 
     @DeleteMapping("/craftsman_categories")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public CraftsmanDTO craftsmanDeleteCategory(@RequestBody CategoryTypeDTO categoryTypeDTO, HttpServletRequest request){
+    public CraftsmanDTO craftsmanDeleteCategory(@RequestBody CategoryTypeDTO categoryTypeDTO, HttpServletRequest request) {
         int id = getLoggedUserId(request);
         return craftsmanService.craftsmanDeleteCategory(id, categoryTypeDTO.getType());
     }
 
     @PutMapping("/craftsman/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public CraftsmanDTO  writeDescription(@RequestBody CraftsmanDescriptionDTO dto,@PathVariable int id){
-        return craftsmanService.writeDescription(dto,id);
+    public CraftsmanDTO writeDescription(@RequestBody CraftsmanDescriptionDTO dto, @PathVariable int id) {
+        return craftsmanService.writeDescription(dto, id);
     }
 
     @GetMapping("/craftsman/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public CraftsmanProfileDTO showProfile(@PathVariable int id){
-       return craftsmanService.showProfile(id);
+    public CraftsmanProfileDTO showProfile(@PathVariable int id) {
+        return craftsmanService.showProfile(id);
     }
 
     @GetMapping("/craftsman")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<CraftsmanDTO> getAllCraftsman(){
+    public List<CraftsmanDTO> getAllCraftsman() {
         return craftsmanService.getAll();
     }
+
     @GetMapping("/craftsman/category/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<CraftsmanDTO> getAllCraftsmanByCategory(@PathVariable int id){
+    public List<CraftsmanDTO> getAllCraftsmanByCategory(@PathVariable int id) {
         return craftsmanService.getAllByCategory(id);
     }
 

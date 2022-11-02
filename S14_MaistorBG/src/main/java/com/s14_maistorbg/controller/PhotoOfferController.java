@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 public class PhotoOfferController extends AbstractController {
 
@@ -14,13 +16,15 @@ public class PhotoOfferController extends AbstractController {
 
     @PostMapping("/offer/{id}/photo")
     @ResponseStatus(code = HttpStatus.OK)
-    public String uploadOfferPhoto(@PathVariable int id, @RequestParam(value = "file") MultipartFile file) {
-        return photoOfferService.uploadOfferPhoto(id,file);
+    public String uploadOfferPhoto(@PathVariable int id, @RequestParam(value = "file") MultipartFile file, HttpServletRequest req) {
+        int userId = getLoggedUserId(req);
+        return photoOfferService.uploadOfferPhoto(id, file, userId);
     }
 
     @DeleteMapping("/offer/{oid}/photo/{pid}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public void deleteOfferPhoto(@PathVariable int oid, @PathVariable int pid){
-        photoOfferService.deleteOfferPhoto(oid,pid);
+    public void deleteOfferPhoto(@PathVariable int oid, @PathVariable int pid, HttpServletRequest req) {
+        int loggedUser = getLoggedUserId(req);
+        photoOfferService.deleteOfferPhoto(oid, pid, loggedUser);
     }
 }

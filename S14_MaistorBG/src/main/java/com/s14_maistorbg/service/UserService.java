@@ -164,7 +164,7 @@ public class UserService extends AbstractService {
     public String uploadProfilePhoto(int id, MultipartFile file) {
         try {
             User user = getUserById(id);
-            String name = createFileAndReturnName(file);
+            String name = createFileAndReturnName(file, id);
 
             if(user.getProfilePicUrl() != null){
                 File oldProfilePic = new File(user.getProfilePicUrl());

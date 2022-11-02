@@ -12,6 +12,7 @@ import com.s14_maistorbg.model.exceptions.NotFoundException;
 import com.s14_maistorbg.model.exceptions.UnauthorizedException;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.Optional;
 
 @Service
@@ -85,9 +86,12 @@ public class RateService extends AbstractService {
         return "You have unrated this profile!";
     }
 
-    public void getRate(int cid){
-        Craftsman craftsman =getCraftsmanById(cid);
-        double rate =rateRepository.getAvgRateForCraftsman(4);
-        rate = Math.round(rate);
+    public double getRate(int cid) {
+        Craftsman craftsman = getCraftsmanById(cid);
+        double rate = rateRepository.getAvgRateForCraftsman(4);
+        DecimalFormat db = new DecimalFormat("#.##");
+        rate = Double.parseDouble(db.format(rate));
+
+        return rate;
     }
 }

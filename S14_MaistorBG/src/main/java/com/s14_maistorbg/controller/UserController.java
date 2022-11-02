@@ -72,9 +72,10 @@ public class UserController extends AbstractController {
         return userService.changePassword(dto, id);
     }
 
-    @PostMapping("/users/{id}/photo")
+    @PostMapping("/users/photo")
     @ResponseStatus(code = HttpStatus.OK)
-    public String uploadProfilePhoto(@PathVariable int id, @RequestParam(value = "file") MultipartFile file) {
-        return userService.uploadProfilePhoto(id, file);
+    public String uploadProfilePhoto(@RequestParam(value = "file") MultipartFile file, HttpServletRequest req) {
+        int userId = getLoggedUserId(req);
+        return userService.uploadProfilePhoto(userId, file);
     }
 }

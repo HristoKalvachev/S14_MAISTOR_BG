@@ -43,11 +43,12 @@ public abstract class AbstractService {
     @Autowired
     protected PhotoCraftsmanRepository photoCraftsmanRepository;
 
-    protected User getUserById(int id){
+    protected User getUserById(int id) {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
     }
-    protected Craftsman getCraftsmanById(int id){
-        return craftsManRepository.findById(id).orElseThrow(()-> new NotFoundException("Craftsman not found!"));
+
+    protected Craftsman getCraftsmanById(int id) {
+        return craftsManRepository.findById(id).orElseThrow(() -> new NotFoundException("Craftsman not found!"));
     }
 
     protected Offer getOfferById(int offerId) {
@@ -60,15 +61,14 @@ public abstract class AbstractService {
                 .orElseThrow(() -> new NotFoundException("Category does not exist"));
     }
 
-    public String createFileAndReturnName(MultipartFile file) throws IOException {
+    public String createFileAndReturnName(MultipartFile file, int id) throws IOException {
         String ext = UserUtility.getFileExtension(file);
-        String absolutePath = "images" + File.separator + System.nanoTime() + ext;
-        String name = absolutePath.replace("images"+File.separator,"");
+        String absolutePath = "images" + File.separator + System.nanoTime() + id + ext;
+        String name = absolutePath.replace("images" + File.separator, "");
         File f = new File(absolutePath);
-        if(!f.exists()) {
+        if (!f.exists()) {
             Files.copy(file.getInputStream(), f.toPath());
-        }
-        else{
+        } else {
             throw new BadRequestException("This file already exists!");
         }
         return name;

@@ -1,9 +1,7 @@
 package com.s14_maistorbg.service;
 
 import com.s14_maistorbg.model.entities.Craftsman;
-import com.s14_maistorbg.model.entities.Offer;
 import com.s14_maistorbg.model.entities.PhotoCraftsman;
-import com.s14_maistorbg.model.entities.PhotoOffer;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
 import com.s14_maistorbg.model.exceptions.NotFoundException;
 import com.s14_maistorbg.model.exceptions.UnauthorizedException;
@@ -23,7 +21,7 @@ public class PhotoCraftsmanService extends AbstractService {
             if (craftsman.getMyPhotos().size() >= maxPhotos) {
                 throw new UnauthorizedException("You can add maximum " + maxPhotos + " pictures!");
             }
-            String name = createFileAndReturnName(file);
+            String name = createFileAndReturnName(file, id);
 
             PhotoCraftsman photoCraftsman = new PhotoCraftsman();
             photoCraftsman.setCraftsman(craftsman);
@@ -36,7 +34,7 @@ public class PhotoCraftsmanService extends AbstractService {
         }
     }
 
-    public void deleteOfferPhoto(int cid, int pid) {
+    public void deleteCraftsmanPhoto(int cid, int pid) {
         getCraftsmanById(cid);
         PhotoCraftsman photoCraftsman = photoCraftsmanRepository.findById(pid).orElseThrow(() -> new NotFoundException("Photo not found!"));
         File file = new File("images" + File.separator + photoCraftsman.getURL());
