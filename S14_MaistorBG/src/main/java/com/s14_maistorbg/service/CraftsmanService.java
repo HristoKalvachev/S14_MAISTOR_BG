@@ -12,8 +12,8 @@ import com.s14_maistorbg.model.exceptions.BadRequestException;
 import com.s14_maistorbg.model.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,13 +77,13 @@ public class CraftsmanService extends AbstractService {
     public CraftsmanProfileDTO showProfile(int id) {
         Craftsman craftsman = getCraftsmanById(id);
         User user = getUserById(id);
-        CraftsmanProfileDTO craftsmanProfileDTO = new CraftsmanProfileDTO();
-        craftsmanProfileDTO = setProfileDto(craftsmanProfileDTO, craftsman, user);
+        CraftsmanProfileDTO craftsmanProfileDTO;
+        craftsmanProfileDTO = setProfileDto(craftsman, user);
         return craftsmanProfileDTO;
     }
 
-    private CraftsmanProfileDTO setProfileDto(CraftsmanProfileDTO craftsmanProfileDTO, Craftsman craftsman, User user) {
-        craftsmanProfileDTO = modelMapper.map(user, CraftsmanProfileDTO.class);
+    private CraftsmanProfileDTO setProfileDto(Craftsman craftsman, User user) {
+        CraftsmanProfileDTO craftsmanProfileDTO = modelMapper.map(user, CraftsmanProfileDTO.class);
         craftsmanProfileDTO.setDescription(craftsman.getDescription());
         List<CategoryTypeDTO> categoryTypeDTOS = craftsman.getMyCategories().stream()
                 .map(e -> modelMapper.map(e, CategoryTypeDTO.class)).collect(Collectors.toList());
@@ -93,6 +93,10 @@ public class CraftsmanService extends AbstractService {
                 .map(e -> modelMapper.map(e, CommentWithUsernameDTO.class)).collect(Collectors.toList());
         craftsmanProfileDTO.setComments(commentWithUsernameDTOS);
         craftsmanProfileDTO.setPhotos(craftsman.getMyPhotos());
+        double rate = rateRepository.getAvgRateForCraftsman(craftsman.getUserId());
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        rate = Double.parseDouble(decimalFormat.format(rate));
+        craftsmanProfileDTO.setRating(rate);
         return craftsmanProfileDTO;
     }
 

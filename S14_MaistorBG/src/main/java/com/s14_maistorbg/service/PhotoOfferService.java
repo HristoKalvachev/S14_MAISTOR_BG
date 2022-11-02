@@ -14,14 +14,17 @@ import java.io.IOException;
 @Service
 public class PhotoOfferService extends AbstractService {
 
-    public String uploadOfferPhoto(int id, MultipartFile file) {
+    public String uploadOfferPhoto(int id, MultipartFile file, int userId) {
         int maxPhotos = 5;
         try {
             Offer offer = offerRepository.findById(id).orElseThrow(() -> new NotFoundException("Offer not found!"));
+            if(offer.getOwner().getId()!=userId){
+                throw new UnauthorizedException("You are not owner of the offer!");
+            }
             if (offer.getOfferPhotos().size() >= maxPhotos) {
                 throw new UnauthorizedException("You can add maximum " + maxPhotos + " pictures!");
             }
-            String name = createFileAndReturnName(file);
+            String name = createFileAndReturnName(file, id);
 
             PhotoOffer photoOffer = new PhotoOffer();
             photoOffer.setOffer(offer);
@@ -34,8 +37,11 @@ public class PhotoOfferService extends AbstractService {
         }
     }
 
-    public void deleteOfferPhoto(int oid, int pid) {
-        getOfferById(oid);
+    public void deleteOfferPhoto(int oid, int pid, int userId) {
+        Offer offer =getOfferById(oid);
+        if(offer.getOwner().getId()!=userId){
+            throw new UnauthorizedException("You are not owner of the offer!");
+        }
         PhotoOffer photoOffer = photoOfferRepository.findById(pid).orElseThrow(() -> new NotFoundException("Photo not found!"));
         File file = new File("images" + File.separator + photoOffer.getURl());
         if (file.delete()) {

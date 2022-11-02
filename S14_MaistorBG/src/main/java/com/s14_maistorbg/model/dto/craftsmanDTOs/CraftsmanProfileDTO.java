@@ -22,6 +22,7 @@ public class CraftsmanProfileDTO {
     private String phoneNumber;
     private String description;
     private String email;
+    private double rating;
     private CityWithoutOwnerDTO city;
     private LocalDate registeredAt;
     private String profilePicUrl;
