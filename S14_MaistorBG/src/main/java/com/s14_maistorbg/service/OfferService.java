@@ -2,6 +2,7 @@ package com.s14_maistorbg.service;
 
 import com.s14_maistorbg.controller.AbstractController;
 import com.s14_maistorbg.model.dto.offerDTOs.EditOfferDTO;
+import com.s14_maistorbg.model.dto.offerDTOs.OfferDTO;
 import com.s14_maistorbg.model.dto.offerDTOs.OfferWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.offerDTOs.ResponseOfferDTO;
 import com.s14_maistorbg.model.dto.photos.offerPhotos.PhotoOfferWithoutOfferDTO;
@@ -15,8 +16,8 @@ import com.s14_maistorbg.model.exceptions.UnauthorizedException;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,22 +25,19 @@ import java.util.stream.Collectors;
 @Service
 public class OfferService extends AbstractService {
 
-    public ResponseOfferDTO postOffer(ResponseOfferDTO offerDTO, int ownerId) {
-        User user = getUserById(ownerId);
+    public ResponseOfferDTO postOffer(OfferDTO offerDTO, int ownerId) {
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
-        Offer offer ;
-        offer =modelMapper.map(offerDTO,Offer.class);
+        User user = getUserById(ownerId);
+        Offer offer = modelMapper.map(offerDTO, Offer.class);
         offer.setId(0);
-
-        if (user.getRole().getId() == AbstractController.CRAFTSMAN_ROLE_ID) {
-            throw new BadRequestException("Only client can add offers!");
+        if(user.getRole().getId() == AbstractController.CRAFTSMAN_ROLE_ID){
+            throw new BadRequestException("You can not post offers!");
         }
-        offer.setCreatedAt(LocalDate.now());
         validateOffer(offer);
+        offer.setCreatedAt(LocalDateTime.now());
         offer.setOwner(user);
         offerRepository.save(offer);
         return modelMapper.map(offer, ResponseOfferDTO.class);
-
     }
 
     private void validateOffer(Offer offer) {

@@ -52,6 +52,16 @@ public abstract class UserUtility {
         return EmailValidator.getInstance(true).isValid(email);
     }
 
+    public static boolean isUsernameValid(String username){
+        Pattern p = Pattern.compile("^[a-zA-Z_]([a-zA-Z0-9_]){2,16}");
+        Matcher m = p.matcher(username);
+        boolean hasMatch = m.matches();
+        if (hasMatch){
+            return true;
+        }
+        return false;
+    }
+
     public static String getFileExtension(MultipartFile file) {
         String name = file.getOriginalFilename();
         int lastIndexOf = name.lastIndexOf(".");

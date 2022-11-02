@@ -1,6 +1,5 @@
 package com.s14_maistorbg.model.entities;
 
-import lombok.Cleanup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,14 +37,14 @@ public class Offer {
     @Column
     private boolean isClosed;
     @Column
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
     @Column
-    private LocalDate durationData;
+    private LocalDateTime durationData;
     @OneToMany(mappedBy = "offer")
     private List<PhotoOffer> offerPhotos;
     @OneToMany(mappedBy = "appliedOffer")
     private List<ApplicationForOffer> applicationsForOffer;
-    @OneToOne(mappedBy = "selectedCraftsman")
+    @OneToOne(mappedBy = "selectedCraftsmanId")
     private Craftsman selectedCraftsmanId;
 
 }

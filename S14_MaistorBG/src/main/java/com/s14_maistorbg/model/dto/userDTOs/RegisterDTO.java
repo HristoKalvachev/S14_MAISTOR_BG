@@ -19,7 +19,6 @@ public class RegisterDTO {
     private String phoneNumber;
     private String email;
     private int cityId;
-    private LocalDate registeredAt;
     private String profilePicUrl;
     private int roleId;
     private int repairCategoryId;

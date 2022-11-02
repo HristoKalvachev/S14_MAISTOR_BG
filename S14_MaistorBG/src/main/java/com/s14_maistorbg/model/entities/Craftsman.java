@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -32,7 +33,7 @@ public class Craftsman {
     private List<PhotoCraftsman> myPhotos;
     @OneToOne
     @JoinColumn(name = "user_id")
-    private Offer selectedCraftsman;
+    private Offer selectedCraftsmanId;
     @ManyToMany
     @JoinTable(
             name = "craftsmans_categories",

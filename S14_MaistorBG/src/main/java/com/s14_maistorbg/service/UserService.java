@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,7 +25,7 @@ import java.util.stream.Collectors;
 public class UserService extends AbstractService {
     private static final int CRAFTSMAN_ROLE_ID = 2;
 
-    public UserWithoutPassDTO login(LoginDTO dto) {
+    public UserWithoutPostsDTO login(LoginDTO dto) {
         String username = dto.getUsername();
         String password = dto.getPassword();
         if (!validateUsername(username) || !validatePassword(password)) {
@@ -33,7 +35,7 @@ public class UserService extends AbstractService {
         if (user.isPresent()) {
             User u = user.get();
             if (encoder.matches(password, u.getPassword())) {
-                return modelMapper.map(user.get(), UserWithoutPassDTO.class);
+                return modelMapper.map(user.get(), UserWithoutPostsDTO.class);
             } else {
                 throw new UnauthorizedException("Wrong credentials!");
             }
@@ -58,14 +60,17 @@ public class UserService extends AbstractService {
         cityRepository.findById(dto.getCityId())
                 .orElseThrow(() -> new NotFoundException("City not found!"));
         user.setPassword(encoder.encode(user.getPassword()));
+        user.setRegisteredAt(LocalDateTime.now());
         userRepository.save(user);
         if (user.getRole().getId() == CRAFTSMAN_ROLE_ID) {
             User craftsmanToAdd = userRepository.findByUsername(user.getUsername())
-                    .orElseThrow(() -> new NotFoundException("User is not add!"));
+                    .orElseThrow(() -> new NotFoundException("User is not added!"));
             Category category1 = getCategoryById(dto.getRepairCategoryId());
             Craftsman craftsman = new Craftsman();
             craftsman.setUserId(craftsmanToAdd.getId());
             craftsman.setCategory(category1);
+
+            craftsman.getMyCategories().add(category1);
             craftsManRepository.save(craftsman);
         }
         return modelMapper.map(user, UserWithoutPassDTO.class);
@@ -80,6 +85,9 @@ public class UserService extends AbstractService {
         }
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new BadRequestException("This email is already registered!");
+        }
+        if (!UserUtility.isUsernameValid(dto.getUsername())){
+            throw new BadRequestException("Invalid username!");
         }
         if (!dto.getPassword().equals(dto.getConfirmPassword())) {
             throw new BadRequestException("Passwords mismatch!");
@@ -141,7 +149,6 @@ public class UserService extends AbstractService {
         }
         user.setPassword(encoder.encode(dto.getNewPassword()));
         userRepository.save(user);
-
         return "Password changed successfully!";
     }
 

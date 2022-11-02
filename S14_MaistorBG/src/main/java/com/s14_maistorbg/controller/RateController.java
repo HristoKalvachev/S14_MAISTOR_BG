@@ -1,10 +1,10 @@
 package com.s14_maistorbg.controller;
 
 import com.s14_maistorbg.model.dto.rateDTOs.RateCraftsManDTO;
-import com.s14_maistorbg.model.dto.rateDTOs.RateDeleteDTO;
 import com.s14_maistorbg.model.dto.rateDTOs.RateResponseDTO;
 import com.s14_maistorbg.service.RateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,18 +17,29 @@ public class RateController extends AbstractController {
     RateService rateService;
 
     @PostMapping("/craftsman/{cId}/rate")
-    public RateResponseDTO rateCraftMan(@RequestBody RateCraftsManDTO dto, @PathVariable int cId,HttpServletRequest req) {
-        getLoggedUserId(req);
-        return rateService.rateCraftsman(cId, dto);
+    @ResponseStatus(value = HttpStatus.OK)
+    public RateResponseDTO rateCraftMan(@RequestBody RateCraftsManDTO dto, @PathVariable int cId, HttpServletRequest req) {
+        int userId = getLoggedUserId(req);
+        return rateService.rateCraftsman(cId, dto, userId);
     }
 
-    @PutMapping("/rate/{rateId}")
-    public RateResponseDTO editRate(@RequestBody RateCraftsManDTO dto, @PathVariable int rateId) {
-        return rateService.editRate(rateId, dto);
+    @PutMapping("/craftsman/{cId}/rate")
+    @ResponseStatus(value = HttpStatus.OK)
+    public RateResponseDTO editRate(@RequestBody RateCraftsManDTO dto, @PathVariable int cId, HttpServletRequest req) {
+        int userId = getLoggedUserId(req);
+        return rateService.editRate(cId, dto, userId);
     }
 
-    @DeleteMapping("/rate/{rateId}")
-    public String unRateCraftsman(@RequestBody RateDeleteDTO dto, @PathVariable int rateId) {
-        return rateService.unRate(rateId, dto);
+    @DeleteMapping("/craftsman/{cId}/rate")
+    @ResponseStatus(value = HttpStatus.OK)
+    public String unRateCraftsman(@PathVariable int cId, HttpServletRequest req) {
+        int userId = getLoggedUserId(req);
+        return rateService.unRate(cId, userId);
+    }
+
+    @GetMapping("/craftsman/{cId}/rate")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void getRate(@PathVariable int cId){
+        rateService.getRate(cId);
     }
 }
