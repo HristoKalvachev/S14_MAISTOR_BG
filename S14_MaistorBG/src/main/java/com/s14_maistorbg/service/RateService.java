@@ -1,9 +1,11 @@
 package com.s14_maistorbg.service;
 
 import com.s14_maistorbg.controller.AbstractController;
+import com.s14_maistorbg.model.dto.offerDTOs.OfferWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.rateDTOs.RateCraftsManDTO;
 import com.s14_maistorbg.model.dto.rateDTOs.RateResponseDTO;
 import com.s14_maistorbg.model.dto.userDTOs.UserWithoutPassDTO;
+import com.s14_maistorbg.model.dto.userDTOs.UserWithoutPostsDTO;
 import com.s14_maistorbg.model.entities.Craftsman;
 import com.s14_maistorbg.model.entities.Rate;
 import com.s14_maistorbg.model.entities.User;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class RateService extends AbstractService {
@@ -39,6 +42,10 @@ public class RateService extends AbstractService {
         rate.setRating(dto.getRating());
         rateRepository.save(rate);
         RateResponseDTO responseDTO = modelMapper.map(rate, RateResponseDTO.class);
+        responseDTO.setRater(modelMapper.map(rater, UserWithoutPassDTO.class));
+        responseDTO.getRater().setPosts(rater.getMyOffers().stream()
+                .map(p -> modelMapper.map(p, OfferWithoutOwnerDTO.class))
+                .collect(Collectors.toList()));
         responseDTO.setCraftsman(modelMapper.map(craftsmanAsUser, UserWithoutPassDTO.class));
         return responseDTO;
     }
@@ -61,6 +68,7 @@ public class RateService extends AbstractService {
     public RateResponseDTO editRate(int cid, RateCraftsManDTO dto, int userId) {
         User rater = getUserById(userId);
         Craftsman craftsman = getCraftsmanById(cid);
+        User userCraftsman = getUserById(craftsman.getUserId());
         Rate rate = rateRepository.findByRaterAndCraftsman(rater, craftsman)
                 .orElseThrow(() -> new UnauthorizedException("You first need to rate!"));
         if (rate.getRater().getId() != rater.getId()) {
@@ -71,7 +79,12 @@ public class RateService extends AbstractService {
         }
         rate.setRating(dto.getRating());
         rateRepository.save(rate);
-        return modelMapper.map(rate, RateResponseDTO.class);
+        RateResponseDTO rateResponseDTO = modelMapper.map(rate, RateResponseDTO.class);
+        rateResponseDTO.setCraftsman(modelMapper.map(userCraftsman, UserWithoutPassDTO.class));
+        rateResponseDTO.getRater().setPosts(rater.getMyOffers().stream()
+                .map(p -> modelMapper.map(p, OfferWithoutOwnerDTO.class))
+                .collect(Collectors.toList()));
+        return rateResponseDTO;
     }
 
     public String unRate(int cId, int userId) {

@@ -35,7 +35,7 @@ public class OfferController extends AbstractController {
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public OfferWithoutOwnerDTO editOffer(@RequestBody EditOfferDTO editOfferDTO, @PathVariable int id, HttpServletRequest request) {
         int loggedUserId = getLoggedUserId(request);
-        return offerService.editOffer(id, editOfferDTO);
+        return offerService.editOffer(id, editOfferDTO, loggedUserId);
     }
 
     @DeleteMapping("/offers/{id}")

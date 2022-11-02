@@ -60,7 +60,10 @@ public class OfferService extends AbstractService {
         return dto;
     }
 
-    public OfferWithoutOwnerDTO editOffer(int id, EditOfferDTO editOfferDTO) {
+    public OfferWithoutOwnerDTO editOffer(int id, EditOfferDTO editOfferDTO, int logedUser) {
+        if (logedUser != editOfferDTO.getOwnerId()){
+            throw new UnauthorizedException("You are not owner of the offer!");
+        }
         Offer updatedOffer = offerRepository.findById(id)
                 .map(o -> {
                     o.setOfferTitle(editOfferDTO.getOfferTitle());
@@ -68,14 +71,16 @@ public class OfferService extends AbstractService {
                     o.setBudget(editOfferDTO.getBudget());
                     return offerRepository.save(o);
                 }).orElseThrow(() -> new NotFoundException("No such user found!"));
-        if(updatedOffer.getOwner().getId()!=editOfferDTO.getOwnerId()){
-            throw new UnauthorizedException("Can not edit other offers!");
-        }
+
         return modelMapper.map(updatedOffer, OfferWithoutOwnerDTO.class);
     }
 
     public ResponseOfferDTO deleteOffer(int id, int userId) {
-        Offer wantedOffer = offerRepository.findById(id).orElseThrow(() -> new BadRequestException("No such offer found!"));
+        Offer wantedOffer = offerRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("No such offer found!"));
+        if (userId != wantedOffer.getOwner().getId()){
+            throw new UnauthorizedException("You are not owner of the offer!");
+        }
         offerRepository.delete(wantedOffer);
         ResponseOfferDTO offerDTO = modelMapper.map(wantedOffer, ResponseOfferDTO.class);
         return offerDTO;
@@ -83,8 +88,8 @@ public class OfferService extends AbstractService {
 
     public List<ResponseOfferDTO> getAll() {
         List<Offer> offers = offerRepository.findAll();
-        List<ResponseOfferDTO> offerDTOS = offers.stream()
+        List<ResponseOfferDTO> responseOfferDTOList = offers.stream()
                 .map(e -> modelMapper.map(e, ResponseOfferDTO.class)).collect(Collectors.toList());
-        return offerDTOS;
+        return responseOfferDTOList;
     }
 }
