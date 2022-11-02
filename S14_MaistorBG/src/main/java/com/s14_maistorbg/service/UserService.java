@@ -117,6 +117,7 @@ public class UserService extends AbstractService {
         editedUser.setLastName(newUser.getLastName());
         editedUser.setPhoneNumber(newUser.getPhoneNumber());
         editedUser.setProfilePicUrl(newUser.getProfilePicUrl());
+        editedUser.setEmail(newUser.getEmail());
         userRepository.save(editedUser);
         return modelMapper.map(editedUser, EditUserDTO.class);
     }
