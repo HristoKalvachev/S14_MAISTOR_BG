@@ -5,12 +5,15 @@ import com.s14_maistorbg.model.entities.Offer;
 import com.s14_maistorbg.model.repositories.OfferRepository;
 import com.s14_maistorbg.service.OfferService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,31 +29,40 @@ public class CronJob {
     @Autowired
     private JavaMailSender mailSender;
 
-    @Scheduled(cron = "0 0 0 * * *")
+
+
+
+    @Scheduled(cron = "1 * * * * *")
     public void deactivateExpiredOffers(){
-        List<Offer> allOffer = getAllOffers();
-        LocalDateTime dateNow = LocalDateTime.now();
-        for(Offer offer : allOffer){
-            if (offer.getDurationData().isBefore(dateNow)){
-                offer.setClosed(true);
-                sendEmail(offer.getOwner().getEmail(),
-                "Expired offer",
-                "Your offer " + offer.getOfferTitle() + " was deactivate.");
+        new Thread(() -> {
+            List<Offer> allOffer = getAllOffers();
+            LocalDateTime dateNow = LocalDateTime.now();
+            for(Offer offer : allOffer){
+                if (offer.getDurationData().isBefore(dateNow)){
+                    offer.setClosed(true);
+                    offerRepository.save(offer);
+                    sendEmail(offer.getOwner().getEmail(),
+                            "Expired offer",
+                            "Your offer " + offer.getOfferTitle() + " was deactivate.");
+                }
             }
-        }
+        });
+
     }
 
     @Scheduled(cron = "0 0 0 * * *")
     public void sendNoticeMailForOffer(){
-        List<Offer> allOffer = getAllOffers();
-        LocalDateTime dateAfterThreeDays = LocalDateTime.now().plusDays(3);
-        for(Offer offer : allOffer){
-            if (offer.getDurationData().isEqual(dateAfterThreeDays)){
-                sendEmail(offer.getOwner().getEmail(),
-                        "Notice mail for offer",
-                        "Your offer will be closed at " + dateAfterThreeDays);
+        new Thread(() -> {
+            List<Offer> allOffer = getAllOffers();
+            LocalDateTime dateAfterThreeDays = LocalDateTime.now().plusDays(3);
+            for(Offer offer : allOffer){
+                if (offer.getDurationData().isEqual(dateAfterThreeDays)){
+                    sendEmail(offer.getOwner().getEmail(),
+                            "Notice mail for offer",
+                            "Your offer will be closed at " + dateAfterThreeDays);
+                }
             }
-        }
+        });
     }
 
     private List<Offer> getAllOffers() {

@@ -7,7 +7,6 @@ import com.s14_maistorbg.model.dto.offerDTOs.OfferWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.offerDTOs.ResponseOfferDTO;
 import com.s14_maistorbg.model.dto.photos.offerPhotos.PhotoOfferWithoutOfferDTO;
 import com.s14_maistorbg.model.dto.userDTOs.UserWithoutPostsDTO;
-import com.s14_maistorbg.model.entities.Craftsman;
 import com.s14_maistorbg.model.entities.Offer;
 import com.s14_maistorbg.model.entities.User;
 import com.s14_maistorbg.model.exceptions.BadRequestException;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,15 +81,15 @@ public class OfferService extends AbstractService {
         return offerDTO;
     }
 
-    public List<ResponseOfferDTO> getAllOffersDoneByCraftsman(int craftsmanId) {
-        Craftsman craftsman = getCraftsmanById(craftsmanId);
-        List<Offer> offersByCraftsman = offerRepository.findBySelectedCraftsmanId(craftsman);
-        List<ResponseOfferDTO> offerDTOS = new ArrayList<>();
-        for (int i = 0; i < offersByCraftsman.size(); i++) {
-            offerDTOS.add(modelMapper.map(offersByCraftsman.get(i), ResponseOfferDTO.class));
-        }
-        return offerDTOS;
-    }
+//    public List<ResponseOfferDTO> getAllOffersDoneByCraftsman(int craftsmanId) {
+//        Craftsman craftsman = getCraftsmanById(craftsmanId);
+//        List<Offer> offersByCraftsman = offerRepository.(craftsman);
+//        List<ResponseOfferDTO> offerDTOS = new ArrayList<>();
+//        for (int i = 0; i < offersByCraftsman.size(); i++) {
+//            offerDTOS.add(modelMapper.map(offersByCraftsman.get(i), ResponseOfferDTO.class));
+//        }
+//        return offerDTOS;
+//    }
 
     public List<ResponseOfferDTO> getAll() {
         List<Offer> offers = offerRepository.findAll();

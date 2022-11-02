@@ -14,13 +14,15 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ApplicationForOfferService extends AbstractService{
 
-    public ApplicationForOfferDTO offerApplication(ApplicationForOfferDTO dto, int id){
-        Craftsman craftsman = getCraftsmanById(id);
-        Offer offer = getOfferById(id);
+    public ApplicationForOfferDTO offerApplication(ApplicationForOfferDTO dto, int craftsmanId, int offerId){
+        modelMapper.getConfiguration().setAmbiguityIgnored(true);
+        Craftsman craftsman = getCraftsmanById(craftsmanId);
+        Offer offer = getOfferById(offerId);
         if (offer.isClosed()){
             throw new BadRequestException("The offer is closed!");
         }
@@ -28,57 +30,41 @@ public class ApplicationForOfferService extends AbstractService{
         applicationForOffer.setCraftsman(craftsman);
         applicationForOffer.setAppliedOffer(offer);
         applicationForOffer.setCreatedAt(LocalDateTime.now());
-        applicationForOffer.setId(0);
         applicationForOfferRepository.save(applicationForOffer);
         return modelMapper.map(applicationForOffer, ApplicationForOfferDTO.class);
     }
 
-    public List<CraftsmanApplicantDTO> getAllOfferApplicants(int offerId, int ownerId){
+    public List<ApplicationForOfferDTO> getAllOfferApplications(int offerId, int ownerId){
+        modelMapper.getConfiguration().setAmbiguityIgnored(true);
         Offer offer = getOfferById(offerId);
         User offerOwner = getUserById(ownerId);
         if (offer.getOwner() != offerOwner){
             throw new BadRequestException("You are not offer owner!");
         }
-        List<CraftsmanApplicantDTO> applicants = new ArrayList<>();
+        List<ApplicationForOfferDTO> applications = new ArrayList<>();
         for (int i = 0; i < offer.getApplicationsForOffer().size(); i++) {
-            Craftsman craftsman = offer.getApplicationsForOffer().get(i).getCraftsman();
-            User user = getUserById(craftsman.getUserId());
-            CraftsmanApplicantDTO applicant = modelMapper.map(user, CraftsmanApplicantDTO.class);
-            applicant.setMyCategories(new ArrayList<>());
-            for (int j = 0; j < craftsman.getMyCategories().size(); j++) {
-                applicant.getMyCategories().add(modelMapper.map(craftsman.getMyCategories().get(i), CategoryTypeDTO.class));
-            }
-            applicants.add(applicant);
+            applications.add(modelMapper.map(offer.getApplicationsForOffer().get(i), ApplicationForOfferDTO.class));
         }
-        return applicants;
+        return applications;
     }
 
-    public CraftsmanApplicantDTO selectCraftsmanForOffer(int offerId, int craftsmanId, int offerOwner){
+    public ApplicationForOfferDTO selectApplicationForOffer(int offerId, int applicationId, int offerOwner){
+        modelMapper.getConfiguration().setAmbiguityIgnored(true);
         Offer offer = getOfferById(offerId);
-        User user = getUserById(offerId);
-        if (offer.getOwner() != user){
+        if (offer.getOwner().getId() != offerOwner){
             throw new BadRequestException("You are not offer owner!");
         }
-        Craftsman craftsman;
-        CraftsmanApplicantDTO selectApplicant = null;
-        for (int i = 0; i < offer.getApplicationsForOffer().size(); i++) {
-            craftsman = offer.getApplicationsForOffer().get(i).getCraftsman();
-            if (craftsman.getUserId() == craftsmanId){
-                User userCraftsman = getUserById(craftsman.getUserId());
-                selectApplicant = modelMapper.map(userCraftsman, CraftsmanApplicantDTO.class);
-                selectApplicant.setMyCategories(new ArrayList<>());
-                for (int j = 0; j < craftsman.getMyCategories().size(); j++) {
-                    selectApplicant.getMyCategories().add(modelMapper.map(craftsman.getMyCategories().get(i), CategoryTypeDTO.class));
-                }
-                offer.setSelectedCraftsmanId(craftsman);
-                offer.setClosed(true);
-                offerRepository.save(offer);
-                break;
-            }else {
-                throw new NotFoundException("The chosen craftsman did not apply for this offer!");
-            }
+        if (offer.isClosed()){
+            throw new BadRequestException("The offer is closed!");
         }
-        return selectApplicant;
+        ApplicationForOffer application = applicationForOfferRepository.findById(applicationId)
+                .orElseThrow(() -> new NotFoundException("Application not found!"));
+        if(application.getAppliedOffer().getId() == offerId){
+            offer.setSelectedApplication(application);
+            offer.setClosed(true);
+            offerRepository.save(offer);
+        }
+        return modelMapper.map(application, ApplicationForOfferDTO.class);
     }
 
 }

@@ -23,7 +23,7 @@ public class ResponseOfferDTO {
     private double budget;
     private int cityId;
     private int repairCategoryId;
-    private LocalDate durationData;
+    private LocalDateTime durationData;
     private UserWithoutPostsDTO owner;
     private List<PhotoOfferWithoutOfferDTO> photoOffers;
     private boolean isClosed;

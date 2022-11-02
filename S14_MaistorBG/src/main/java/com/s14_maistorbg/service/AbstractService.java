@@ -74,4 +74,9 @@ public abstract class AbstractService {
         return name;
     }
 
+    protected Category getCategoryByType(String categoryType) {
+        return categoryRepository.findByType(categoryType)
+                .orElseThrow(() -> new NotFoundException("Category does not exist"));
+    }
+
 }

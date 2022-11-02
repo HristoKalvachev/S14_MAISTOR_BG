@@ -51,10 +51,11 @@ public class UserController extends AbstractController {
         return "You are successfully logout!";
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/users")
     @ResponseStatus(code = HttpStatus.OK)
-    public UserWithoutPassDTO delete(@PathVariable int id) {
-        return userService.delete(id);
+    public UserWithoutPassDTO deleteProfile(HttpServletRequest request) {
+        int userId = getLoggedUserId(request);
+        return userService.deleteProfile(userId);
     }
 
     @PutMapping("/users")

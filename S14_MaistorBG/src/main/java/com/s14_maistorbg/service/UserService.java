@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -69,7 +70,7 @@ public class UserService extends AbstractService {
             Craftsman craftsman = new Craftsman();
             craftsman.setUserId(craftsmanToAdd.getId());
             craftsman.setCategory(category1);
-
+            craftsman.setMyCategories(new ArrayList<>());
             craftsman.getMyCategories().add(category1);
             craftsManRepository.save(craftsman);
         }
@@ -111,27 +112,35 @@ public class UserService extends AbstractService {
             throw new BadRequestException("Invalid phone number!");
         }
         User editedUser = getUserById(id);
-        EditUserDTO dto = modelMapper.map(editedUser, EditUserDTO.class);
-        dto.setUsername(newUser.getUsername());
-        dto.setFirstName(newUser.getFirstName());
-        dto.setLastName(newUser.getLastName());
-        dto.setPhoneNumber(newUser.getPhoneNumber());
-        dto.setProfilePicUrl(newUser.getProfilePicUrl());
-        userRepository.save(modelMapper.map(dto, User.class));
-        return dto;
+        editedUser.setUsername(newUser.getUsername());
+        editedUser.setFirstName(newUser.getFirstName());
+        editedUser.setLastName(newUser.getLastName());
+        editedUser.setPhoneNumber(newUser.getPhoneNumber());
+        editedUser.setProfilePicUrl(newUser.getProfilePicUrl());
+        editedUser.setEmail(newUser.getEmail());
+        userRepository.save(editedUser);
+        return modelMapper.map(editedUser, EditUserDTO.class);
     }
 
-    public UserWithoutPassDTO delete(int id) {
-        User userForDelete = userRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException("User does not exist!"));
-        userRepository.delete(userForDelete);
+    public UserWithoutPassDTO deleteProfile(int id) {
+        User userForDelete = getUserById(id);
+        userForDelete.setUsername("Deleted at " + LocalDateTime.now());
+        userForDelete.setFirstName("Deleted at " + LocalDateTime.now());
+        userForDelete.setLastName("Deleted at " + LocalDateTime.now());
+        userForDelete.setPassword("Deleted at " + LocalDateTime.now());
+        userForDelete.setEmail("Deleted at " + LocalDateTime.now());
+        userForDelete.setPhoneNumber("Deleted at " + LocalDateTime.now());
+        userForDelete.setProfilePicUrl("Deleted at " + LocalDateTime.now());
+        userRepository.save(userForDelete);
         return modelMapper.map(userForDelete, UserWithoutPassDTO.class);
     }
 
     public UserWithoutPassDTO getById(int userId) {
         User user = getUserById(userId);
         UserWithoutPassDTO dto = modelMapper.map(user, UserWithoutPassDTO.class);
-        dto.setPosts(user.getMyOffers().stream().map(p -> modelMapper.map(p, OfferWithoutOwnerDTO.class)).collect(Collectors.toList()));
+        dto.setPosts(user.getMyOffers().stream()
+                .map(p -> modelMapper.map(p, OfferWithoutOwnerDTO.class))
+                .collect(Collectors.toList()));
         return dto;
     }
 

@@ -29,5 +29,8 @@ public class ApplicationForOffer {
     @ManyToOne
     @JoinColumn(name = "craftsman_id")
     private Craftsman craftsman;
+    @OneToOne
+    @JoinColumn(name = "id")
+    private Offer selectedOffer;
 
 }
