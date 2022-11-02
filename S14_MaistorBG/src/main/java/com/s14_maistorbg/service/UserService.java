@@ -65,7 +65,7 @@ public class UserService extends AbstractService {
         userRepository.save(user);
         if (user.getRole().getId() == CRAFTSMAN_ROLE_ID) {
             User craftsmanToAdd = userRepository.findByUsername(user.getUsername())
-                    .orElseThrow(() -> new NotFoundException("User is not add!"));
+                    .orElseThrow(() -> new NotFoundException("User is not added!"));
             Category category1 = getCategoryById(dto.getRepairCategoryId());
             Craftsman craftsman = new Craftsman();
             craftsman.setUserId(craftsmanToAdd.getId());
@@ -146,7 +146,8 @@ public class UserService extends AbstractService {
 
     public String changePassword(ChangePasswordDTO dto, int id) {
         User user = getUserById(id);
-        if (!encoder.matches(dto.getPassword(),user.getPassword())) {
+        boolean isPassCorrect = encoder.matches(dto.getPassword(), user.getPassword());
+        if (!isPassCorrect) {
             throw new BadRequestException("Incorrect password!");
         }
         if (!UserUtility.isPassValid(dto.getPassword())) {

@@ -67,13 +67,14 @@ public class UserController extends AbstractController {
 
     @PutMapping("/users/change_pass/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public String changePassword(@RequestBody ChangePasswordDTO dto, @PathVariable int id) {
+    public String changePassword(@RequestBody ChangePasswordDTO dto, @PathVariable int id,HttpServletRequest req) {
+        getLoggedUserId(req);
         return userService.changePassword(dto, id);
     }
 
     @PostMapping("/users/{id}/photo")
     @ResponseStatus(code = HttpStatus.OK)
     public String uploadProfilePhoto(@PathVariable int id, @RequestParam(value = "file") MultipartFile file) {
-        return userService.uploadProfilePhoto(id,file);
+        return userService.uploadProfilePhoto(id, file);
     }
 }

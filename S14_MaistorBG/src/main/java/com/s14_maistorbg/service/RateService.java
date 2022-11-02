@@ -1,7 +1,7 @@
 package com.s14_maistorbg.service;
 
+import com.s14_maistorbg.controller.AbstractController;
 import com.s14_maistorbg.model.dto.rateDTOs.RateCraftsManDTO;
-import com.s14_maistorbg.model.dto.rateDTOs.RateDeleteDTO;
 import com.s14_maistorbg.model.dto.rateDTOs.RateResponseDTO;
 import com.s14_maistorbg.model.dto.userDTOs.UserWithoutPassDTO;
 import com.s14_maistorbg.model.entities.Craftsman;
@@ -17,19 +17,19 @@ import java.util.Optional;
 @Service
 public class RateService extends AbstractService {
 
-    private final static int MIN_RATE =1;
-    private final static int MAX_RATE =10;
+    private final static int MIN_RATE = 1;
+    private final static int MAX_RATE = 10;
 
-    public RateResponseDTO rateCraftsman(int craftsmanId, RateCraftsManDTO dto) {
+    public RateResponseDTO rateCraftsman(int craftsmanId, RateCraftsManDTO dto, int userId) {
         Craftsman craftsMan = getCraftsmanById(craftsmanId);
 
         User craftsmanAsUser = userRepository.findById(craftsmanId)
                 .orElseThrow(() -> new NotFoundException("Craftsman to be rated not found!"));
-        User rater = getUserById(dto.getId());
+        User rater = getUserById(userId);
 
 
         Optional<Rate> checkForAlreadyGivenRate = rateRepository.findByRaterAndCraftsman(rater, craftsMan);
-        int craftsmanRoleID = 2;
+        int craftsmanRoleID = AbstractController.CRAFTSMAN_ROLE_ID;
         rateValidation(dto, craftsMan, rater, craftsmanRoleID, checkForAlreadyGivenRate);
 
         Rate rate = new Rate();
@@ -57,27 +57,37 @@ public class RateService extends AbstractService {
         }
     }
 
-    public RateResponseDTO editRate(int rateId, RateCraftsManDTO dto) {
-        Rate rate = rateRepository.findById(rateId).orElseThrow(() -> new NotFoundException("You first need to rate"));
-        User rater = getUserById(dto.getId());
+    public RateResponseDTO editRate(int cid, RateCraftsManDTO dto, int userId) {
+        User rater = getUserById(userId);
+        Craftsman craftsman = getCraftsmanById(cid);
+        Rate rate = rateRepository.findByRaterAndCraftsman(rater, craftsman)
+                .orElseThrow(() -> new UnauthorizedException("You first need to rate!"));
         if (rate.getRater().getId() != rater.getId()) {
             throw new UnauthorizedException("Can`t edit other users rates!");
         }
-        if (dto.getRating() > 10 || dto.getRating() < 1) {
-            throw new BadRequestException("Rate must be between 1 and 10!");
+        if (dto.getRating() > MAX_RATE || dto.getRating() < MIN_RATE) {
+            throw new BadRequestException("Rate must be between " + MIN_RATE + " and " + MAX_RATE + "!");
         }
         rate.setRating(dto.getRating());
         rateRepository.save(rate);
         return modelMapper.map(rate, RateResponseDTO.class);
     }
 
-    public String unRate(int rateId, RateDeleteDTO dto) {
-        Rate rate = rateRepository.findById(rateId).orElseThrow(() -> new NotFoundException("You first need to rate"));
-        User rater = getUserById(dto.getId());
+    public String unRate(int cId, int userId) {
+        User rater = getUserById(userId);
+        Craftsman craftsman = getCraftsmanById(cId);
+        Rate rate = rateRepository.findByRaterAndCraftsman(rater, craftsman)
+                .orElseThrow(() -> new UnauthorizedException("You first need to rate!"));
         if (rate.getRater().getId() != rater.getId()) {
             throw new UnauthorizedException("You can`t remove rate!");
         }
         rateRepository.delete(rate);
         return "You have unrated this profile!";
+    }
+
+    public void getRate(int cid){
+        Craftsman craftsman =getCraftsmanById(cid);
+        double rate =rateRepository.getAvgRateForCraftsman(4);
+        rate = Math.round(rate);
     }
 }

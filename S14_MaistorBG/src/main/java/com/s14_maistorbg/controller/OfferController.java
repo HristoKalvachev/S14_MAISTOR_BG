@@ -1,6 +1,7 @@
 package com.s14_maistorbg.controller;
 
 import com.s14_maistorbg.model.dto.offerDTOs.EditOfferDTO;
+import com.s14_maistorbg.model.dto.offerDTOs.OfferDTO;
 import com.s14_maistorbg.model.dto.offerDTOs.OfferWithoutOwnerDTO;
 import com.s14_maistorbg.model.dto.offerDTOs.ResponseOfferDTO;
 import com.s14_maistorbg.service.OfferService;
@@ -19,7 +20,7 @@ public class OfferController extends AbstractController {
 
     @PostMapping("/offers")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public ResponseOfferDTO postOffer(@RequestBody ResponseOfferDTO offerDTO, HttpServletRequest request) {
+    public ResponseOfferDTO postOffer(@RequestBody OfferDTO offerDTO, HttpServletRequest request) {
         int id = getLoggedUserId(request);
         return offerService.postOffer(offerDTO, id);
     }
@@ -44,11 +45,13 @@ public class OfferController extends AbstractController {
         return offerService.deleteOffer(id, loggedUserId);
     }
 
+
 //    @GetMapping("/offers/craftsman/{cid}")
 //    @ResponseStatus(code = HttpStatus.ACCEPTED)
 //    public List<ResponseOfferDTO> getAllOffersDoneByCraftsman(@PathVariable int cid) {
 //        return offerService.getAllOffersDoneByCraftsman(cid);
 //    }
+
 
     @GetMapping("/offers/all")
     @ResponseStatus(code = HttpStatus.OK)
