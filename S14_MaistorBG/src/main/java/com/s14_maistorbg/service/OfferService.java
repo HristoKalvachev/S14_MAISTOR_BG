@@ -55,7 +55,7 @@ public class OfferService extends AbstractService {
                 .orElseThrow(() -> new NotFoundException("No such post found!"));
         ResponseOfferDTO dto = modelMapper.map(wantedOffer, ResponseOfferDTO.class);
         dto.setOwner(modelMapper.map(wantedOffer.getOwner(), UserWithoutPostsDTO.class));
-        dto.setPhotoOffers(wantedOffer.getOfferPhotos().stream()
+        dto.setOfferPhotos(wantedOffer.getOfferPhotos().stream()
                 .map(e -> modelMapper.map(e, PhotoOfferWithoutOfferDTO.class)).collect(Collectors.toList()));
         return dto;
     }
@@ -81,19 +81,10 @@ public class OfferService extends AbstractService {
         return offerDTO;
     }
 
-//    public List<ResponseOfferDTO> getAllOffersDoneByCraftsman(int craftsmanId) {
-//        Craftsman craftsman = getCraftsmanById(craftsmanId);
-//        List<Offer> offersByCraftsman = offerRepository.(craftsman);
-//        List<ResponseOfferDTO> offerDTOS = new ArrayList<>();
-//        for (int i = 0; i < offersByCraftsman.size(); i++) {
-//            offerDTOS.add(modelMapper.map(offersByCraftsman.get(i), ResponseOfferDTO.class));
-//        }
-//        return offerDTOS;
-//    }
-
     public List<ResponseOfferDTO> getAll() {
         List<Offer> offers = offerRepository.findAll();
-        return offers.stream()
+        List<ResponseOfferDTO> offerDTOS = offers.stream()
                 .map(e -> modelMapper.map(e, ResponseOfferDTO.class)).collect(Collectors.toList());
+        return offerDTOS;
     }
 }
