@@ -39,10 +39,11 @@ public class OfferService extends AbstractService {
     }
 
     private void validateOffer(Offer offer) {
-        if (offer.getOfferTitle().trim().length() < 10) {
+        int minTextSize = 10;
+        if (offer.getOfferTitle().trim().length() < minTextSize) {
             throw new BadRequestException("Write a more describing title!");
         }
-        if (offer.getJobDescription().trim().length() < 10) {
+        if (offer.getJobDescription().trim().length() < minTextSize) {
             throw new BadRequestException("Write a better description!");
         }
         if (offer.getBudget() < 0) {
@@ -55,7 +56,7 @@ public class OfferService extends AbstractService {
                 .orElseThrow(() -> new NotFoundException("No such post found!"));
         ResponseOfferDTO dto = modelMapper.map(wantedOffer, ResponseOfferDTO.class);
         dto.setOwner(modelMapper.map(wantedOffer.getOwner(), UserWithoutPostsDTO.class));
-        dto.setPhotoOffers(wantedOffer.getOfferPhotos().stream()
+        dto.setOfferPhotos(wantedOffer.getOfferPhotos().stream()
                 .map(e -> modelMapper.map(e, PhotoOfferWithoutOfferDTO.class)).collect(Collectors.toList()));
         return dto;
     }

@@ -63,11 +63,6 @@ public abstract class UserUtility {
         return false;
     }
 
-//    public static boolean isRoleIdValid(int roleId){
-//        if (roleId != USER_ROLE_ID || roleId != CRAFTSMAN_ROLE_ID){
-//
-//        }
-//    }
 
     public static String getFileExtension(MultipartFile file) {
         String name = file.getOriginalFilename();

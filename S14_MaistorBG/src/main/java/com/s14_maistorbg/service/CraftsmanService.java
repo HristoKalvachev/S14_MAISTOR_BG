@@ -93,7 +93,7 @@ public class CraftsmanService extends AbstractService {
                 .map(e -> modelMapper.map(e, CommentWithUsernameDTO.class)).collect(Collectors.toList());
         craftsmanProfileDTO.setComments(commentWithUsernameDTOS);
         craftsmanProfileDTO.setPhotos(craftsman.getMyPhotos());
-        double rate = rateRepository.getAvgRateForCraftsman(craftsman.getUserId());
+        double rate = rateRepository.getAvgRateForCraftsman(craftsman.getUserId()).orElse(0.0);
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
         rate = Double.parseDouble(decimalFormat.format(rate));
         craftsmanProfileDTO.setRating(rate);

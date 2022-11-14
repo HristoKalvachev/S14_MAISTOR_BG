@@ -101,7 +101,7 @@ public class RateService extends AbstractService {
 
     public double getRate(int cid) {
         Craftsman craftsman = getCraftsmanById(cid);
-        double rate = rateRepository.getAvgRateForCraftsman(4);
+        Double rate = rateRepository.getAvgRateForCraftsman(cid).orElseThrow(() -> new NotFoundException("No rate!"));
         DecimalFormat db = new DecimalFormat("#.##");
         rate = Double.parseDouble(db.format(rate));
 

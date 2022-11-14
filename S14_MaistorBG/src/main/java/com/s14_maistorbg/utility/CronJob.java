@@ -32,7 +32,7 @@ public class CronJob {
 
 
 
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "1 * * * * *")
     public void deactivateExpiredOffers(){
         new Thread(() -> {
             List<Offer> allOffer = getAllOffers();
@@ -46,7 +46,7 @@ public class CronJob {
                             "Your offer " + offer.getOfferTitle() + " was deactivate.");
                 }
             }
-        });
+        }).start();
 
     }
 
@@ -62,7 +62,7 @@ public class CronJob {
                             "Your offer will be closed at " + dateAfterThreeDays);
                 }
             }
-        });
+        }).start();
     }
 
     private List<Offer> getAllOffers() {
@@ -70,7 +70,7 @@ public class CronJob {
         return offers;
     }
 
-    @Async
+//    @Async
     public void sendEmail(String email, String subject, String text){
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);

@@ -16,5 +16,5 @@ public interface RateRepository extends JpaRepository<Rate, Integer> {
 
     @Query(value = "SELECT avg(craftsman_ratings.rating) from craftsman_ratings where craftsman_ratings.craftsman_id=?",
             nativeQuery = true)
-    double getAvgRateForCraftsman(int id);
+    Optional<Double> getAvgRateForCraftsman(int id);
 }
